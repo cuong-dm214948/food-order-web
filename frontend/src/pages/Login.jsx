@@ -1,0 +1,118 @@
+import React from "react";
+import { useRef, useState, useEffect, useContext } from 'react';
+// import AuthContext from "./context/AuthProvider";
+import axios from 'axios';
+import Helmet from "../components/Helmet/Helmet";
+import CommonSection from "../components/UI/common-section/CommonSection";
+import { Container, Row, Col } from "reactstrap";
+import { Link, useNavigate } from "react-router-dom";
+import "../styles/login.css";
+
+const Login = () => {
+  const [user, setUser] = useState('');
+  const [pwd, setPwd] = useState('');
+
+  const navigateTo = useNavigate();
+
+  const[loginStatus, setLoginStatus] =useState('')
+  const[statusHolder, setStatusHolder] = useState('message')
+
+//   axios.default.withCredential = true;
+  const handleSubmit = (e) => {
+      e.preventDefault();   
+      axios.post('http://localhost:5001/login',{
+      username: user,
+      password: pwd
+    })
+    .then((res)=>{
+      console.log()
+
+      if(res.data.message || username == '' || password == ''){
+        navigateTo('/')
+        setLoginStatus('Login failed. Invalid username or password')
+      }
+
+      else{
+        navigateTo('/home')
+      }
+    })
+  }
+
+  useEffect(()=>{
+    if (loginStatus !== ''){
+      setStatusHolder('showMessage')
+      setTimeout(()=>{
+        setStatusHolder('message')
+      }, 4000)
+    }
+
+  }, [loginStatus])
+
+  return (
+    <Helmet title="Login">
+      <CommonSection title="Login" />
+      <section>
+        <Container>
+          <Row>
+            <Col lg="6" md="6" sm="12" className="m-auto text-center">         
+              {/* <>
+                  {success ? (
+                      <section>
+                          <h1>You are logged in!</h1>
+                          <br />
+                          <p>
+                              <a href="#">Go to Home</a>
+                          </p>
+                      </section>
+                  ) : ( */}
+                      <section>
+                          {/* <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p> */}
+                          <form className="form mb-5" onSubmit={handleSubmit}>
+
+                            <span clssname={statusHolder}>{loginStatus} </span>
+                            <div className="form__group">
+                                <label htmlFor="username">Username:</label>
+                                <input
+                                    type="text"
+                                    placeholder="username"
+                                    // id="username"
+                                    // ref={userRef}
+                                    // autoComplete="off"
+                                    onChange={(e) => setUser(e.target.value)}
+                                    // value={user}
+                                    required
+                                />
+                            </div>
+
+                            <div className="form__group">
+                                <label htmlFor="password">Password:</label>
+                                <input
+                                    type="password"
+                                    id="password"
+                                    placeholder="password"
+                                    onChange={(e) => setPwd(e.target.value)}
+                                    // value={pwd}
+                                    required
+                                />
+                            </div>
+
+                            <div>
+                                <p>Oauthen2</p>
+                            </div>
+
+                            <button type="submit" className="addTOCart__btn">Sign In</button>
+                          </form>
+                      </section>
+                  {/* /)}
+              </> */}
+
+              <Link to="/register">CAN'T SIGN IN? CREATE ACCOUNT</Link>
+            </Col>
+          </Row>
+        </Container>
+      </section>
+    </Helmet>
+  );
+};
+
+export default Login;
