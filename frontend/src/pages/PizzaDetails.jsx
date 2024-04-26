@@ -20,10 +20,8 @@ const ExtraIngredients = {
 	ONION: "Onion",
 	PEPPER: "Pepper",
 	PINAPPLE: "Pinapple", 
-  TUNA: "Tuna", 
   MEAT: "Meat", 
   CHEESE: "Cheese", 
-  HOTSAUCE: "Hot Sauce", 
   CORN: "Corn"
 }
 

@@ -6,57 +6,47 @@ import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/common-section/CommonSection";
 import { Container, Row, Col } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
+import "../styles/login.css";
 
 const Login = () => {
-    // const[values, setValues]= useState({
-    //     username:'',
-    //     password:''
-    // })
-  //const { setAuth } = useContext(AuthContext);
-//   const userRef = useRef();
-//   const errRef = useRef();
-
   const [user, setUser] = useState('');
   const [pwd, setPwd] = useState('');
-//   const [errMsg, setErrMsg] = useState('');
-//   const [success, setSuccess] = useState(false);
 
-//   useEffect(() => {
-//       userRef.current.focus();
-//   }, [])
+  const navigateTo = useNavigate();
 
-//   useEffect(() => {
-//       setErrMsg('');
-//   }, [user, pwd])
-  const navigate = useNavigate();
+  const[loginStatus, setLoginStatus] =useState('')
+  const[statusHolder, setStatusHolder] = useState('message')
+
 //   axios.default.withCredential = true;
   const handleSubmit = (e) => {
       e.preventDefault();   
-      axios.post('http://localhost:8081/login',{
+      axios.post('http://localhost:5001/login',{
       username: user,
       password: pwd
     })
     .then((res)=>{
-      console.log(res)
+      console.log()
+
+      if(res.data.message || username == '' || password == ''){
+        navigateTo('/')
+        setLoginStatus('Login failed. Invalid username or password')
+      }
+
+      else{
+        navigateTo('/home')
+      }
     })
-    //  })
-    //       .then(res => {
-    //         if (res.data.Status === "Success") {
-    //             navigate('/')
-    //         } else {
-    //             alert(res.data.Error)
-    //         }
-    //     })
-    //     .then (err => console.log(err));
-//           console.log(JSON.stringify(response?.data));
-//           //console.log(JSON.stringify(response));
-//           const accessToken = response?.data?.accessToken;
-//           const roles = response?.data?.roles;
-//           //setAuth({ user, pwd, roles, accessToken });
-//           setUser('');
-//           setPwd('');
-//           setSuccess(true);    
   }
+
+  useEffect(()=>{
+    if (loginStatus !== ''){
+      setStatusHolder('showMessage')
+      setTimeout(()=>{
+        setStatusHolder('message')
+      }, 4000)
+    }
+
+  }, [loginStatus])
 
   return (
     <Helmet title="Login">
@@ -79,6 +69,7 @@ const Login = () => {
                           {/* <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p> */}
                           <form className="form mb-5" onSubmit={handleSubmit}>
 
+                            <span clssname={statusHolder}>{loginStatus} </span>
                             <div className="form__group">
                                 <label htmlFor="username">Username:</label>
                                 <input
@@ -105,14 +96,16 @@ const Login = () => {
                                 />
                             </div>
 
+                            <div>
+                                <p>Oauthen2</p>
+                            </div>
+
                             <button type="submit" className="addTOCart__btn">Sign In</button>
                           </form>
                       </section>
                   {/* /)}
               </> */}
-              <div>
-                  <p>Oauthen2</p>
-              </div>
+
               <Link to="/register">CAN'T SIGN IN? CREATE ACCOUNT</Link>
             </Col>
           </Row>

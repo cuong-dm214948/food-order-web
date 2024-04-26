@@ -21,7 +21,7 @@ const Home = () => {
                 </h1>
 
                 <button className="order__btn d-flex align-items-center justify-content-between ">
-                  <Link to="/foods">
+                  <Link to="/menu">
                     Menu <i className="ri-arrow-right-s-line"></i>
                   </Link>
                 </button>
