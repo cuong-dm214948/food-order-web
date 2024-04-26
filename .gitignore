@@ -12,8 +12,8 @@ backend/node_modules
 /coverage
 
 # production
-/build
-
+frontend/build
+.vscode
 # misc
 .DS_Store
 .env
