@@ -17,7 +17,7 @@ const Login = () => {
   const[loginStatus, setLoginStatus] =useState('')
   const[statusHolder, setStatusHolder] = useState('message')
 
-//   axios.default.withCredential = true;
+  axios.defaults.withCredentials = true;
   const handleSubmit = (e) => {
       e.preventDefault();   
       axios.post('http://localhost:5001/login',{
@@ -25,10 +25,9 @@ const Login = () => {
       password: pwd
     })
     .then((res)=>{
-      console.log()
-
-      if(res.data.message || username == '' || password == ''){
-        navigateTo('/')
+      console.log(res)
+      if(res.data.Status === 'Success'){
+        navigateTo('/menu')
         setLoginStatus('Login failed. Invalid username or password')
       }
 
@@ -36,6 +35,7 @@ const Login = () => {
         navigateTo('/home')
       }
     })
+    .then(err => console.log(err));
   }
 
   useEffect(()=>{

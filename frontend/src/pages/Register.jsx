@@ -15,7 +15,7 @@ const Register = () => {
     const [name, setName] = useState('');
     const [user, setUser] = useState('');
     const [pwd, setPwd] = useState('');
-
+    const navigate =useNavigate()
     const handleSubmit = (e) => {
         e.preventDefault();
         // const v1 = USER_REGEX.test(user);
@@ -24,23 +24,19 @@ const Register = () => {
         //     setErrMsg("Invalid Entry");
         //     return;
         // }
-        console.log(e)
         axios.post('http://localhost:5001/register',{
           name: name,
           username: user,
           password: pwd
         })
-        .then(()=>{
-          console.log('user created')
+        .then(res => {
+            if (res.data.Status === "Success") {
+                navigate('/login')
+            } else {
+                alert("Error")
+            }
         })
-        // .then(res => {
-        //     if (res.data.Status === "Success") {
-        //         navigate('/login')
-        //     } else {
-        //         alert("Error")
-        //     }
-        // })
-        // .then (err => console.log(err));
+        
         //     setSuccess(true);
         //     setUser('');
         //     setPwd('');
