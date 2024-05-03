@@ -1,10 +1,9 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import axios from 'axios';
 import { Container } from "reactstrap";
 import logo from "../../assets/images/res-logo.png";
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useContext } from 'react';
 import { cartUiActions } from "../../store/shopping-cart/cartUiSlice";
 import "../../styles/header.css";
 
@@ -22,7 +21,7 @@ const nav__links = [
     path: "/cart",
   },
   {
-    display: "Contact",
+    display: "Discount",
     path: "/contact",
   },
 ];
@@ -113,21 +112,20 @@ const Header = () => {
               <i class="ri-shopping-basket-line"></i>
               <span className="cart__badge">{totalQuantity}</span>
             </span>
-
+              
             {auth ?
             <span className="user">
-              <Link to="/login">
+              <Link to="/logout">
                 <i class="ri-user-line"></i>
               </Link>
             </span>
             :
             <span className="user">
-            <Link to="/logout">
-              <i class="ri-user-line"></i>
-              <p>{name}</p>
-            </Link>
-          </span>
-
+              <Link to="/login">
+                <i class="ri-user-line"></i>
+                <p>{name}</p>
+              </Link>
+            </span>
             }
 
             <span className="mobile__menu" onClick={toggleMenu}>

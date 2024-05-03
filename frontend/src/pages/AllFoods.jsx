@@ -10,12 +10,12 @@ import "../styles/pagination.css";
 
 const AllFoods = () => {
 
-  const [category, setCategory] = useState("ALL");
+  const [category, setCategory] = useState("Pizza");
   const [allProducts, setAllProducts] = useState(products);
 
   useEffect(() => {
-    if (category === "ALL") {
-      setAllProducts(products);
+    if (category === "Discount") {
+      //link to discount page (no implement)
     }
 
     if (category === "Pizza") {
@@ -53,18 +53,17 @@ const AllFoods = () => {
 
   return (
     <Helmet title="All-Foods">
-      <CommonSection title="All Foods" />
       <section>
         <Container>
         <Col lg="12">
               <div className="food__category d-flex align-items-center justify-content-center gap-4">
                 <button
                   className={`all__btn  ${
-                    category === "ALL" ? "foodBtnActive" : ""
+                    category === "Discount" ? "foodBtnActive" : ""
                   } `}
-                  onClick={() => setCategory("ALL")}
+                  onClick={() => setCategory("Discount")}
                 >
-                  All
+                  Discount
                 </button>
                 <button
                   className={`d-flex align-items-center gap-2 ${

@@ -35,13 +35,13 @@ const Cart = () => {
 
               <div className="mt-4">
                 <h6>
-                  Subtotal: $
-                  <span className="cart__subtotal">{totalAmount}</span>
+                  Total: 
+                  <span className="cart__subtotal">{totalAmount}</span>$
                 </h6>
-                <p>Taxes and shipping will calculate at checkout</p>
+                <p>Taxes already included</p>
                 <div className="cart__page-btn">
                   <button className="addTOCart__btn me-4">
-                    <Link to="/pizzas">Continue Shopping</Link>
+                    <Link to="/menu">Continue Shopping</Link>
                   </button>
                   <button className="addTOCart__btn">
                     <Link to="/checkout">Proceed to checkout</Link>

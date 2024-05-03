@@ -10,7 +10,7 @@ const Checkout = () => {
           <h3>Thank you for your order!</h3>
         </div>
         <span>
-          Your order is being processed and will be delivered as fast as
+          Your order is being processed and will be served as fast as
           possible.
         </span>
       </div>

@@ -96,9 +96,7 @@ const FoodDetails = () => {
                   {" "}
                   Price: <span>${price}</span>
                 </p>
-                <p className="category mb-5">
-                  Category: <span>{category}</span>
-                </p>
+
 
                 <button onClick={addItem} className="addTOCart__btn">
                   Add to Cart
@@ -108,78 +106,15 @@ const FoodDetails = () => {
 
             <Col lg="12">
               <div className="tabs d-flex align-items-center gap-5 py-3">
-                <h6
-                  className={` ${tab === "desc" ? "tab__active" : ""}`}
-                  onClick={() => setTab("desc")}
-                >
+                <h6>
                   Description
-                </h6>
-                <h6
-                  className={` ${tab === "rev" ? "tab__active" : ""}`}
-                  onClick={() => setTab("rev")}
-                >
-                  Review
                 </h6>
               </div>
 
-              {tab === "desc" ? (
-                <div className="tab__content">
+              <div className="tab__content">
                   <p>{desc}</p>
                 </div>
-              ) : (
-                <div className="tab__form mb-3">
-                  <div className="review pt-5">
-                    <p className="user__name mb-0">Jhon Doe</p>
-                    <p className="user__email">jhon1@gmail.com</p>
-                    <p className="feedback__text">great product</p>
-                  </div>
 
-                  <div className="review">
-                    <p className="user__name mb-0">Jhon Doe</p>
-                    <p className="user__email">jhon1@gmail.com</p>
-                    <p className="feedback__text">great product</p>
-                  </div>
-
-                  <div className="review">
-                    <p className="user__name mb-0">Jhon Doe</p>
-                    <p className="user__email">jhon1@gmail.com</p>
-                    <p className="feedback__text">great product</p>
-                  </div>
-                  <form className="form" onSubmit={submitHandler}>
-                    <div className="form__group">
-                      <input
-                        type="text"
-                        placeholder="Enter your name"
-                        onChange={(e) => setEnteredName(e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div className="form__group">
-                      <input
-                        type="text"
-                        placeholder="Enter your email"
-                        onChange={(e) => setEnteredEmail(e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <div className="form__group">
-                      <textarea
-                        rows={5}
-                        type="text"
-                        placeholder="Write your review"
-                        onChange={(e) => setReviewMsg(e.target.value)}
-                        required
-                      />
-                    </div>
-
-                    <button type="submit" className="addTOCart__btn">
-                      Submit
-                    </button>
-                  </form>
-                </div>
-              )}
             </Col>
 
             <Col lg="12" className="mb-5 mt-4">

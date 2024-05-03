@@ -174,7 +174,7 @@ const products = [
     image03: image28,
     category: "Side",
 
-    desc: "",
+    desc: "My y dam bong nam sot kem",
   },
 
   {
