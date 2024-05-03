@@ -2,6 +2,33 @@
   padding-top: 70px;
 }
 
+.food__category {
+  background: #df2020;
+  text-align: center;
+  margin-top: 30px;
+  padding: 20px 0px;
+  border-radius: 8px;
+}
+
+.food__category button {
+  border: none;
+  outline: none;
+  padding: 7px 20px;
+  background: transparent;
+  color: #fff;
+}
+
+.food__category button img {
+  width: 20px;
+  height: 20px;
+}
+
+.foodBtnActive {
+  background: #fff !important;
+  border-radius: 5px;
+  color: #df2020 !important;
+}
+
 .hero__title {
   font-size: 2.5rem;
   line-height: 55px;
@@ -19,13 +46,14 @@
 
 .order__btn {
   border: none;
-  outline: none;
-  padding: 7px 20px;
+  display:flex;
+  height: 50px;
+  padding: 0px 20px 20px 20px;
   border-radius: 5px;
   cursor: pointer;
   background: #df2020;
   color: #fff;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 .order__btn:hover {

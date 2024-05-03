@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/common-section/CommonSection";
 import { Container, Row, Col } from "reactstrap";
@@ -9,43 +9,108 @@ import "../styles/all-foods.css";
 import "../styles/pagination.css";
 
 const AllFoods = () => {
-  const [searchTerm, setSearchTerm] = useState("");
 
-  const [pageNumber, setPageNumber] = useState(0);
+  const [category, setCategory] = useState("ALL");
+  const [allProducts, setAllProducts] = useState(products);
 
-  const searchedProduct = products.filter((item) => {
-    if (searchTerm.value === "") {
-      return item;
+  useEffect(() => {
+    if (category === "ALL") {
+      setAllProducts(products);
     }
-    if (item.title.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return item;
-    } else {
-      return console.log("not found");
+
+    if (category === "Pizza") {
+      const filteredProducts = products.filter(
+        (item) => item.category === "Pizza"
+      );
+
+      setAllProducts(filteredProducts);
     }
-  });
 
-  const productPerPage = 12;
-  const visitedPage = pageNumber * productPerPage;
-  const displayPage = searchedProduct.slice(
-    visitedPage,
-    visitedPage + productPerPage
-  );
+    if (category === "Side") {
+      const filteredProducts = products.filter(
+        (item) => item.category === "Side"
+      );
 
-  const pageCount = Math.ceil(searchedProduct.length / productPerPage);
+      setAllProducts(filteredProducts);
+    }
 
-  const changePage = ({ selected }) => {
-    setPageNumber(selected);
-  };
+    if (category === "Desert") {
+      const filteredProducts = products.filter(
+        (item) => item.category === "Desert"
+      );
+
+      setAllProducts(filteredProducts);
+    }
+
+    if (category === "Drink") {
+      const filteredProducts = products.filter(
+        (item) => item.category === "Drink"
+      );
+
+      setAllProducts(filteredProducts);
+    }
+  }, [category]);
 
   return (
     <Helmet title="All-Foods">
       <CommonSection title="All Foods" />
-
       <section>
         <Container>
+        <Col lg="12">
+              <div className="food__category d-flex align-items-center justify-content-center gap-4">
+                <button
+                  className={`all__btn  ${
+                    category === "ALL" ? "foodBtnActive" : ""
+                  } `}
+                  onClick={() => setCategory("ALL")}
+                >
+                  All
+                </button>
+                <button
+                  className={`d-flex align-items-center gap-2 ${
+                    category === "Pizza" ? "foodBtnActive" : ""
+                  } `}
+                  onClick={() => setCategory("Pizza")}
+                >
+                  
+                Pizza
+                </button>
+
+                <button
+                  className={`d-flex align-items-center gap-2 ${
+                    category === "Side" ? "foodBtnActive" : ""
+                  } `}
+                  onClick={() => setCategory("Side")}
+                >
+                 
+                  Side
+                </button>
+
+                <button
+                  className={`d-flex align-items-center gap-2 ${
+                    category === "Desert" ? "foodBtnActive" : ""
+                  } `}
+                  onClick={() => setCategory("Desert")}
+                >
+                 
+                 Desert
+                </button>
+
+                <button
+                  className={`d-flex align-items-center gap-2 ${
+                    category === "Drink" ? "foodBtnActive" : ""
+                  } `}
+                  onClick={() => setCategory("Drink")}
+                >
+                 
+                 Drink
+                </button>
+              </div>
+            </Col>
+
           <Row>
             
-            {displayPage.map((item) => (
+            {allProducts.map((item) => (
               <Col lg="3" md="4" sm="6" xs="6" key={item.id} className="mb-4">
                 <ProductCard item={item} />
               </Col>

@@ -1,12 +1,11 @@
 import React, { useRef, useEffect } from "react";
-
+import axios from 'axios';
 import { Container } from "reactstrap";
 import logo from "../../assets/images/res-logo.png";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
-
+import { useState, useContext } from 'react';
 import { cartUiActions } from "../../store/shopping-cart/cartUiSlice";
-
 import "../../styles/header.css";
 
 const nav__links = [
@@ -15,7 +14,7 @@ const nav__links = [
     path: "/home",
   },
   {
-    display: "Foods",
+    display: "Menu",
     path: "/menu",
   },
   {
@@ -60,8 +59,25 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  console.log("menuRef.current:", menuRef.current);
-console.log("headerRef.current:", headerRef.current);
+  const navigate = useNavigate();
+  const [auth, setAuth] = useState(false)
+  const [message, setMessage] = useState('')
+  const [name, setName] =useState('')
+  
+  useEffect(()=>{
+    axios.get('/')
+        .then(res => {
+            if (res.data.Status === "Success") {
+              setAuth(true)  
+              setName(res.data.name)
+              navigate('/login')
+            } else {
+              setAuth(false)
+              setMessage(res.data.Error)
+            }
+        })
+        .then (err => console.log(err));
+  })
 
 
   return (
@@ -98,11 +114,21 @@ console.log("headerRef.current:", headerRef.current);
               <span className="cart__badge">{totalQuantity}</span>
             </span>
 
+            {auth ?
             <span className="user">
               <Link to="/login">
                 <i class="ri-user-line"></i>
               </Link>
             </span>
+            :
+            <span className="user">
+            <Link to="/logout">
+              <i class="ri-user-line"></i>
+              <p>{name}</p>
+            </Link>
+          </span>
+
+            }
 
             <span className="mobile__menu" onClick={toggleMenu}>
               <i class="ri-menu-line"></i>

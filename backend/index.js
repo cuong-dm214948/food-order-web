@@ -45,4 +45,20 @@ app.get('/auth/google/failure', (req, res) => {
   res.send('Failed to authenticate..');
 });
 
+
+//Server generates unique secret key for user:
+const secretKey = crypto.randomBytes(160)
+await addSecretKeyForUser(username, secretKey)
+//Give secret key to user via QR code...
+//Generate the current one-time password
+const counter = Math.floor(Date.now() / (30 * 1000))
+const hmacHash = crypto.createHmac('sha1',
+secretKey).update(counter).digest()
+const offset = hmacHash[19] & 0xf
+const truncatedHash = ((hmacHash[offset++] & 0x7f) << 24 |
+(hmacHash[offset++] & 0xff) << 16 |
+(hmacHash[offset++] & 0xff) << 8 |
+(hmacHash[offset++] & 0xff) |)
+const finalOTP = truncatedHash % (10 ^ 6)
+
 app.listen(5000, () => console.log('listening on port: 5000'));

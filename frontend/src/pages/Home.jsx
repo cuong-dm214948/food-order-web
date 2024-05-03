@@ -28,11 +28,7 @@ const Home = () => {
   })
   return (
     <Helmet title="Home">
-      {
-        auth?
-        
         <section>
-          <h3>Your are authorized ---- {name}</h3>
           <Container>
             <Row>
               <Col lg="6" md="6">
@@ -58,13 +54,6 @@ const Home = () => {
             </Row>
           </Container>
         </section>
-        :
-        <div>
-          <h3>{message}</h3>
-          <h3>Login now</h3>
-          <Link to = "/login" className="btn btn-primary">Login</Link>
-        </div>
-      } 
     </Helmet>
   );
 };

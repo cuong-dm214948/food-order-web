@@ -39,233 +39,230 @@ import image38 from '../image/pizza/Pizza-Thap-Cam-Thuong-Hang-Extravaganza.jpg'
 const products = [
   {
     id: "01",
-    title: "Chicken Burger",
-    price: 24.0,
-    image01: image36,
-    image02: image31,
-    image03: image32,
-    category: "Burger",
+    title: "CHEESY MADNESS",
+    price: 240.0,
+    image01: image30,
+    category: "Pizza",
 
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque. ",
+    desc: " ",
   },
 
   {
     id: "02",
-    title: "Vegetarian Pizza",
-    price: 115.0,
-    image01: image38,
+    title: "Meat-lover",
+    price: 215.0,
+    image01: image31,
 
     category: "Pizza",
 
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
+    desc: "",
   },
 
   {
     id: "03",
-    title: "Double Cheese Margherita",
-    price: 110.0,
-    image01: image30,
+    title: "Beefsteak NewYork",
+    price: 210.0,
+    image01: image32,
 
     category: "Pizza",
 
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
+    desc: "",
   },
 
   {
     id: "04",
-    title: "Maxican Green Wave",
-    price: 110.0,
+    title: "Singapore Crab Meat",
+    price: 210.0,
     image01: image33,
-    image03: image35,
     category: "Pizza",
 
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
+    desc: "",
   },
 
-  // {
-  //   id: "05",
-  //   title: "Cheese Burger",
-  //   price: 24.0,
-  //   image01: product_05_image_01,
-  //   image02: product_05_image_02,
-  //   image03: product_05_image_03,
-  //   category: "Burger",
+  {
+    id: "05",
+    title: "Pepperoni feast",
+    price: 224.0,
+    image01: image34,
+    category: "Pizza",
 
-  //   desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
-  // },
-  // {
-  //   id: "06",
-  //   title: "Royal Cheese Burger",
-  //   price: 24.0,
-  //   image01: product_01_image_01,
-  //   image02: product_01_image_02,
-  //   image03: product_01_image_03,
-  //   category: "Burger",
+    desc: "",
+  },
+  {
+    id: "06",
+    title: "Hawian",
+    price: 224.0,
+    image01: image35,
 
-  //   desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
-  // },
+    category: "Pizza",
+
+    desc: "",
+  },
 
   {
     id: "07",
-    title: "Seafood Pizza",
-    price: 115.0,
-    image01: image37,
+    title: "Cheesy chicken Bacon",
+    price: 215.0,
+    image01: image36,
     category: "Pizza",
 
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
+    desc: "",
   },
 
   {
     id: "08",
-    title: "Thin Cheese Pizza",
-    price: 110.0,
-    image01: image34,
+    title: "Seafood Delight",
+    price: 210.0,
+    image01: image37,
 
     category: "Pizza",
 
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
+    desc: "",
   },
 
-  // {
-  //   id: "09",
-  //   title: "Pizza With Mushroom",
-  //   price: 110.0,
-  //   image01: product_04_image_02,
-  //   image02: product_04_image_01,
-  //   image03: product_04_image_03,
-  //   category: "Pizza",
+  {
+    id: "09",
+    title: "Extravaganza",
+    price: 210.0,
+    image01: image38,
+    category: "Pizza",
 
-  //   desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
-  // },
+    desc: "",
+  },
+
+
+
 
 
 
   {
     id: "10",
-    title: "Classic Hamburger",
+    title: "Khai vi tong hop",
     price: 24.0,
-    image01: image24,
-    image02: image25,
-    image03: image26,
-    category: "Burger",
+    image01: image20,
+    category: "Side",
 
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
+    desc: "",
   },
 
   {
     id: "11",
-    title: "Crunchy Bread ",
+    title: "Beef croisant ",
     price: 35.0,
-    image01: image20,
-    image02: image21,
-    image03: image22,
-    category: "Bread",
+    image01: image21,
+    category: "Side",
 
-    desc: "Lorem ipsum dolor sit amet consectetur adipisicing elit. Soluta ad et est, fugiat repudiandae neque illo delectus commodi magnam explicabo autem voluptates eaque velit vero facere mollitia. Placeat rem, molestiae error obcaecati enim doloribus impedit aliquam, maiores qui minus neque.",
+    desc: "",
   },
 
   {
     id: "12",
-    title: "Loaf Bread ",
+    title: "Popcorn ",
     price: 35.0,
-    image01: image27,
-    image02: image29,
-    image03: image28,
-    category: "Bread",
+    image01: image22,
+    category: "Side",
 
     desc: "",
   },
 
   {
     id: "13",
-    title: "Loaf Bread ",
+    title: "Pasta",
     price: 35.0,
-    image01: image27,
+    image01: image23,
     image02: image29,
     image03: image28,
-    category: "Bread",
+    category: "Side",
+
+    desc: "",
+  },
+
+  {
+    id: "14",
+    title: "Bread ",
+    price: 35.0,
+    image01: image24,
+    category: "Side",
+
+    desc: "",
+  },
+
+  {
+    id: "15",
+    title: "Potato Wedge ",
+    price: 35.0,
+    image01: image25,
+    category: "Side",
+
+    desc: "",
+  },
+
+  {
+    id: "16",
+    title: "Sausage",
+    price: 35.0,
+    image01: image26,
+    category: "Side",
 
     desc: "",
   },
 
   {
     id: "20",
-    title: "Loaf Bread ",
+    title: "Chocolava ",
     price: 35.0,
-    image01: image27,
-    image02: image29,
-    image03: image28,
-    category: "Bread",
-
+    image01: image1,
+    category: "Desert",
     desc: "",
   },
 
   {
     id: "21",
-    title: "Loaf Bread ",
+    title: "Choco pizza ",
     price: 35.0,
-    image01: image10,
-    image02: image11,
-    image03: image12,
-    category: "Bread",
-
+    image01: image2,
+    category: "Desert",
     desc: "",
   },
 
   {
     id: "22",
-    title: "Loaf Bread ",
+    title: "Chocolate roll ",
     price: 35.0,
-    image01: image13,
-    image02: image14,
-    image03: image15,
-    category: "Bread",
-
-    desc: "",
-  },
-
-  {
-    id: "23",
-    title: "Loaf Bread ",
-    price: 35.0,
-    image01: image16,
-    image02: image17,
-    image03: image18,
-    category: "Bread",
-
+    image01: image2,
+    category: "Desert",
     desc: "",
   },
 
   {
     id: "30",
-    title: "Loaf Bread ",
+    title: "Chia seed ",
     price: 35.0,
-    image01: image27,
-    image02: image29,
-    image03: image28,
-    category: "Bread",
+    image01: image17,
+    image02: image11,
+    category: "Drink",
 
     desc: "",
   },
 
   {
     id: "31",
-    title: "Loaf Bread ",
+    title: "Sprite ",
     price: 35.0,
-    image01: image3,
-
-    category: "Bread",
+    image01: image12,
+    image02: image13,
+    category: "Drink",
 
     desc: "",
   },
 
   {
     id: "32",
-    title: "Loaf Bread ",
+    title: "Coke",
     price: 35.0,
-    image01: image2,
-
-    category: "Bread",
+    image01: image14,
+    image02: image13,
+    category: "Drink",
 
     desc: "",
   },
@@ -273,10 +270,21 @@ const products = [
 
   {
     id: "33",
-    title: "Loaf Bread ",
+    title: "Dasani ",
     price: 35.0,
-    image01: image1,
-    category: "Bread",
+    image01: image16,
+    category: "Drink",
+
+    desc: "",
+  },
+
+  {
+    id: "34",
+    title: "Panta ",
+    price: 35.0,
+    image01: image18,
+    image02: image19,
+    category: "Drink",
 
     desc: "",
   },
