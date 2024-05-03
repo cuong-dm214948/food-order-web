@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/common-section/CommonSection";
 import { Container, Row, Col } from "reactstrap";
@@ -9,13 +10,13 @@ import "../styles/all-foods.css";
 import "../styles/pagination.css";
 
 const AllFoods = () => {
-
+  const navigate = useNavigate();
   const [category, setCategory] = useState("Pizza");
   const [allProducts, setAllProducts] = useState(products);
 
   useEffect(() => {
     if (category === "Discount") {
-      //link to discount page (no implement)
+      navigate('/contact')
     }
 
     if (category === "Pizza") {
