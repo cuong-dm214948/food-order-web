@@ -1,5 +1,6 @@
 import React from "react";
 import { useState, useEffect} from 'react';
+import OAuth from '../components/OAuth';
 // import AuthContext from "./context/AuthProvider";
 import axios from 'axios';
 import Helmet from "../components/Helmet/Helmet";
@@ -7,32 +8,43 @@ import CommonSection from "../components/UI/common-section/CommonSection";
 import { Container, Row, Col } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
 import "../styles/login.css";
+import {
+  signInStart,
+  signInSuccess,
+  signInFailure,
+} from '../store/user/userSlice';
+import { useDispatch, useSelector } from 'react-redux';
+//import OAuth from '../components/OAuth';
 
 const Login = () => {
   const [user, setUser] = useState('');
   const [pwd, setPwd] = useState('');
-
+  const dispatch = useDispatch();
   const navigateTo = useNavigate();
-
+  const {loading, error} = useSelector((state) => state.user)
   const[loginStatus, setLoginStatus] =useState(false)
   const[statusHolder, setStatusHolder] = useState('message')
 
   axios.defaults.withCredentials = true;
   const handleSubmit = (e) => {
-      e.preventDefault();   
+      e.preventDefault(); 
+      //start dispatch
+      dispatch(signInStart());  
       axios.post('http://localhost:5001/login',{
       username: user,
       password: pwd
     })
     .then((res)=>{
       console.log(res)
+      
       if(res.data.Status === 'Success'){
         navigateTo('/')
         setLoginStatus(true)
+        dispatch(signInSuccess(res.data));
       }
 
       else{
-        alert("Error")
+        dispatch(signInFailure())
       }
     })
     .then(err => console.log(err));
@@ -86,10 +98,8 @@ const Login = () => {
                                 />
                             </div>
 
-                            <div>
-                                <p>Oauthen2</p>
-                            </div>
-
+                            <OAuth />
+                            <br></br>
                             <button type="submit" className="addTOCart__btn">Sign In</button>
                           </form>
                       </section>
@@ -98,6 +108,9 @@ const Login = () => {
 
               <Link to="/register">CAN'T SIGN IN? CREATE ACCOUNT</Link>
               {/* //edit */}
+              <p className="text-red-700 mt-5">
+                {error ? error.message || 'Something went wrong!' : ''}
+                </p>
             </Col>
           </Row>
         </Container>

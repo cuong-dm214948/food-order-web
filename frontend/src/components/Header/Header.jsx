@@ -76,10 +76,9 @@ const Header = () => {
               setMessage(res.data.Error)
             }
         })
-        .then (err => console.log(err));
   },[])
 
-
+ 
   return (
     <header className="header" ref={headerRef}>
       <Container>
@@ -119,12 +118,14 @@ const Header = () => {
               <Link to="/logout">
                 <i class="ri-user-line"></i>
                 <p>{username}</p>
+  
               </Link>
             </span>
             :
             <span className="user">
               <Link to="/login">
-                <i class="ri-user-line"></i>       
+                <i class="ri-user-line"></i>  
+                  
               </Link>
             </span>
             }
