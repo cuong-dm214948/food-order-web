@@ -24,8 +24,9 @@ const Register = () => {
         //     setErrMsg("Invalid Entry");
         //     return;
         // }
+ 
         axios.post('http://localhost:5001/register',{
-          name: name,
+          
           username: user,
           password: pwd
         })
@@ -57,7 +58,7 @@ const Register = () => {
           <Row>
             <Col lg="6" md="6" sm="12" className="m-auto text-center">
               <form className="form mb-5" onSubmit={handleSubmit}>
-                <div className="form__group">
+                {/* <div className="form__group">
                     <label htmlFor="name">
                                 Name:                           
                     </label>
@@ -73,7 +74,7 @@ const Register = () => {
                                 required
                                 aria-describedby="uidnote" 
                     />
-                </div>
+                </div> */}
 
                 <div className="form__group">
                     <label htmlFor="username">
@@ -90,7 +91,7 @@ const Register = () => {
                                 // value={user}
                                 placeholder="Enter username"
                                 name ="username"
-                                // required
+                                required
                                 // aria-invalid={validName ? "false" : "true"}
                                 // aria-describedby="uidnote"
                                 // onFocus={() => setUserFocus(true)}
@@ -117,7 +118,7 @@ const Register = () => {
                             // value={pwd}
                             placeholder="Enter password"
                             name = 'password'
-                            // required
+                            required
                             // aria-invalid={validPwd ? "false" : "true"}
                             // aria-describedby="pwdnote"
                             // onFocus={() => setPwdFocus(true)}

@@ -1,5 +1,5 @@
 import React from "react";
-import { useRef, useState, useEffect, useContext } from 'react';
+import { useState, useEffect} from 'react';
 // import AuthContext from "./context/AuthProvider";
 import axios from 'axios';
 import Helmet from "../components/Helmet/Helmet";
@@ -14,7 +14,7 @@ const Login = () => {
 
   const navigateTo = useNavigate();
 
-  const[loginStatus, setLoginStatus] =useState('')
+  const[loginStatus, setLoginStatus] =useState(false)
   const[statusHolder, setStatusHolder] = useState('message')
 
   axios.defaults.withCredentials = true;
@@ -27,12 +27,12 @@ const Login = () => {
     .then((res)=>{
       console.log(res)
       if(res.data.Status === 'Success'){
-        navigateTo('/menu')
-        setLoginStatus('Login failed. Invalid username or password')
+        navigateTo('/')
+        setLoginStatus(true)
       }
 
       else{
-        navigateTo('/home')
+        alert("Error")
       }
     })
     .then(err => console.log(err));
@@ -55,16 +55,6 @@ const Login = () => {
         <Container>
           <Row>
             <Col lg="6" md="6" sm="12" className="m-auto text-center">         
-              {/* <>
-                  {success ? (
-                      <section>
-                          <h1>You are logged in!</h1>
-                          <br />
-                          <p>
-                              <a href="#">Go to Home</a>
-                          </p>
-                      </section>
-                  ) : ( */}
                       <section>
                           {/* <p ref={errRef} className={errMsg ? "errmsg" : "offscreen"} aria-live="assertive">{errMsg}</p> */}
                           <form className="form mb-5" onSubmit={handleSubmit}>
@@ -107,6 +97,7 @@ const Login = () => {
               </> */}
 
               <Link to="/register">CAN'T SIGN IN? CREATE ACCOUNT</Link>
+              {/* //edit */}
             </Col>
           </Row>
         </Container>

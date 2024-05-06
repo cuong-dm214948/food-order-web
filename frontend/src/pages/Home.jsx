@@ -1,31 +1,10 @@
 import React from "react";
 import Helmet from "../components/Helmet/Helmet.js";
 import { Container, Row, Col } from "reactstrap";
-import { useRef, useState, useEffect, useContext } from 'react';
-import axios from 'axios';
 import guyImg from "../assets/images/delivery-guy.png";
 import "../styles/hero-section.css";
-import { Link, useNavigate } from "react-router-dom";
+import { Link} from "react-router-dom";
 const Home = () => {
-  const navigate = useNavigate();
-  const [auth, setAuth] = useState(false)
-  const [message, setMessage] = useState('')
-  const [name, setName] =useState('')
-  
-  useEffect(()=>{
-    axios.get('/')
-        .then(res => {
-            if (res.data.Status === "Success") {
-              setAuth(true)  
-              setName(res.data.name)
-              navigate('/login')
-            } else {
-              setAuth(false)
-              setMessage(res.data.Error)
-            }
-        })
-        .then (err => console.log(err));
-  })
   return (
     <Helmet title="Home">
         <section>

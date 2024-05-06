@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useState } from "react";
 import axios from 'axios';
 import { Container } from "reactstrap";
 import logo from "../../assets/images/res-logo.png";
-import { NavLink, Link, useNavigate } from "react-router-dom";
+import { NavLink, Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { cartUiActions } from "../../store/shopping-cart/cartUiSlice";
 import "../../styles/header.css";
@@ -10,14 +10,14 @@ import "../../styles/header.css";
 const nav__links = [
   {
     display: "Home",
-    path: "/home",
+    path: "/",
   },
   {
     display: "Menu",
     path: "/menu",
   },
   {
-    display: "Cart",
+    display: "Cart", 
     path: "/cart",
   },
   {
@@ -58,25 +58,26 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [auth, setAuth] = useState(false)
   const [message, setMessage] = useState('')
-  const [name, setName] =useState('')
+  const [username, setUserName] =useState('')
   
+  axios.defaults.withCredentials = true;
+
   useEffect(()=>{
-    axios.get('/')
+    axios.get('http://localhost:5001')
         .then(res => {
             if (res.data.Status === "Success") {
               setAuth(true)  
-              setName(res.data.name)
-              navigate('/login')
+              setUserName(res.data.username)
             } else {
               setAuth(false)
               setMessage(res.data.Error)
             }
         })
         .then (err => console.log(err));
-  })
+  },[])
 
 
   return (
@@ -117,13 +118,13 @@ const Header = () => {
             <span className="user">
               <Link to="/logout">
                 <i class="ri-user-line"></i>
+                <p>{username}</p>
               </Link>
             </span>
             :
             <span className="user">
               <Link to="/login">
-                <i class="ri-user-line"></i>
-                <p>{name}</p>
+                <i class="ri-user-line"></i>       
               </Link>
             </span>
             }

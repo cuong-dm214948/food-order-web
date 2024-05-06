@@ -21,12 +21,12 @@ dotenv.config({path: './.env'})
 const app =express()
 app.use(express.json())
 app.use(cors({
-    origin:["http://localhost:3000"],
-    methods :["POST", "GET"],
+    origin:['http://localhost:3000'],
+    methods :['POST', 'GET'],
     credentials: true,
 
 }))
-const salt = bcrypt.genSalt(10); 
+
 const db = mysql.createConnection({
     host: process.env.DATABASE_HOST,
     user: process.env.DATABASE_USER,
@@ -36,8 +36,9 @@ const db = mysql.createConnection({
 
 //Verify the token before accessing protected routes
 const authMiddleware = (req, res, next) =>{
-    const {token} = req.cookies;
-    // or const token = req.headers.authorization
+    //const {token} = req.cookies;
+   
+    const token = req.headers.authorization
     if(!token){
         return res.status(401).json({Error: "No token provided"})
 
@@ -54,7 +55,8 @@ const authMiddleware = (req, res, next) =>{
     }
 }
 
-app.get('/',authMiddleware,(req,res)=>{
+app.get('http://localhost:5001',authMiddleware, (req, res) => {
+    console.log(req.cookies)
     return res.json({Status:"Success", username:req.username})
 })
 
@@ -69,52 +71,56 @@ db.connect((error)=>{
   });
 
 
-  app.post('/register', (req, res) => {
-    const sql = "INSERT INTO users (username, password, name) VALUES (?,?,?)";
-    bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
-        if (err) {
-            return res.json({ Error: "Error hash password" });
-        
-        }
-        const sentName = req.body.name
-        const sentUsername =req.body.username
-        const values = [ sentUsername,  hash, sentName]
+  const saltRounds = 10; // Define the number of salt rounds
 
-        db.query(sql, values, (err, result) => {
-            if (err) {
-                res.send(err)
-            }
-            console.log('Success add user')
-            res.send({ Status: "Success" });
-        });
-    });
-});
+  app.post('/register', (req, res) => {
+      const sql = "INSERT INTO users (username, password) VALUES (?,?)";
+     
+      bcrypt.genSalt(saltRounds, (err, salt) => {
+          if (err) {
+              return res.status(500).send("Internal server error");
+          }
+  
+          bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
+              if (err) {
+                  return res.status(500).send("Internal server error");
+              }
+              
+              const sentUsername = req.body.username;
+              const values = [sentUsername, hash];
+              
+              db.query(sql, values, (err, result) => {
+                  if (err) {
+                      return res.status(500).send("Internal server error");
+                  }
+                  res.send({ Status: "Success" });
+              });
+          });
+      });
+  });
+  
 
 const refreshTokens = [];
 app.post('/login', (req, res) => {
-    const sentusername = req.body.username;
-// //     bcrypt.hash(password, saltRounds, (err, hash) => {
-// //         if (err) {
-// //             return res.status(500).json({ error: "Error hashing password" });
-// //         }
+        const sentusername = req.body.username;
         const values = [sentusername];
         const sql = "SELECT * FROM users WHERE username = ?";
-       db.query(sql, values , (err, results) => {
+        db.query(sql, values , (err, results) => {
             if (err) {
                 res.json({ Error: err });
             }
             
             if (results.length > 0){
                 bcrypt.compare(req.body.password.toString(), results[0].password, (err, response) =>{
-                    console.log(response)
                     if (err) return res.json ({Error: "Invalid username or password"})
                     if (response){
                         const username =results[0].username
                         const token = generateAccessToken(username);
+                        //console.log("access-token:", token)
                         const refreshToken =jwt.sign({username},process.env.REFRESH_TOKEN_SECRET);
                         refreshTokens.push(refreshToken)
                         res.cookie('access-token',token);
-                        console.log(token)
+                        //console.log(token)
                         return res.json({Status:"Success", token, refreshToken})
                     }
                     else{
