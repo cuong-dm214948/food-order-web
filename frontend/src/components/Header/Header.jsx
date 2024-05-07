@@ -2,10 +2,11 @@ import React, { useRef, useEffect, useState } from "react";
 import axios from 'axios';
 import { Container } from "reactstrap";
 import logo from "../../assets/images/res-logo.png";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { cartUiActions } from "../../store/shopping-cart/cartUiSlice";
 import "../../styles/header.css";
+import { signOut } from "firebase/auth";
 
 const nav__links = [
   {
@@ -31,7 +32,7 @@ const Header = () => {
   const headerRef = useRef();
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const dispatch = useDispatch();
-
+  const navigateTo = useNavigate();
   const toggleMenu = () => {
     if (menuRef.current) {
       menuRef.current.classList.toggle("show__menu");
@@ -57,20 +58,19 @@ const Header = () => {
   
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  //const navigate = useNavigate();
   const [auth, setAuth] = useState(false)
   const [message, setMessage] = useState('')
   const [username, setUserName] =useState('')
   
   axios.defaults.withCredentials = true;
-
+  console.log(auth)
   useEffect(()=>{
     axios.get('http://localhost:5001')
         .then(res => {
+          console.log(res.data)
             if (res.data.Status === "Success") {
               setAuth(true)  
-              setUserName(res.data.username)
+              setUserName(res.data.username.username)
             } else {
               setAuth(false)
               setMessage(res.data.Error)
@@ -78,7 +78,17 @@ const Header = () => {
         })
   },[])
 
- 
+  const handleSignout = (e) => {
+    axios.get('http://localhost:5001/logout')
+    .then((res)=>{
+      console.log(res)
+      if(res.data.Status === 'Success'){
+        navigateTo('/login')
+        setAuth(false)
+        //dispatch(signOut())
+      }})
+  }
+
   return (
     <header className="header" ref={headerRef}>
       <Container>
@@ -115,11 +125,11 @@ const Header = () => {
               
             {auth ?
             <span className="user">
-              <Link to="/logout">
+             
                 <i class="ri-user-line"></i>
                 <p>{username}</p>
-  
-              </Link>
+                <button onClick={handleSignout} >Sign out </button>
+              
             </span>
             :
             <span className="user">

@@ -34,31 +34,39 @@ const db = mysql.createConnection({
     database: process.env.DATABASE,
 });
 
-//Verify the token before accessing protected routes
-const authMiddleware = (req, res, next) =>{
-    //const {token} = req.cookies;
-   
-    const token = req.headers.authorization
-    if(!token){
-        return res.status(401).json({Error: "No token provided"})
+const authMiddleware = (req, res, next) => {
+    const cookieHeader = req.headers.cookie;
 
-    }
-    else{
-        jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded)=>{
-            if (err){
-                return res.status(401).json({Error:"Invalid token"})
-            }else{
-                req.username =decoded;
-                next();
+
+    const cookiePairs = cookieHeader.split(';');
+    console.log(cookieHeader)
+    let token = null;
+    for (const pair of cookiePairs) {
+        const [key, value] = pair.trim().split('=');
+        if (key === 'access-token') {
+            token = value;
+                break;
             }
-        })
+        }
+    if (!token) {
+        return res.status(401).json({ Error: "No token provided" });
+    } else {
+        jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+            if (err) {
+                return res.status(401).json({ Error: "Invalid token" });
+            } else {
+                req.username = decoded;
+                next();
+                
+            }
+        });
     }
-}
+};
 
-app.get('http://localhost:5001',authMiddleware, (req, res) => {
-    console.log(req.cookies)
-    return res.json({Status:"Success", username:req.username})
-})
+app.get('/', authMiddleware, (req, res) => {
+    return res.json({ Status: "Success", username: req.username });
+});
+
 
 db.connect((error)=>{
     if(error){
@@ -119,8 +127,7 @@ app.post('/login', (req, res) => {
                         //console.log("access-token:", token)
                         const refreshToken =jwt.sign({username},process.env.REFRESH_TOKEN_SECRET);
                         refreshTokens.push(refreshToken)
-                        res.cookie('access-token',token);
-                        //console.log(token)
+                        res.cookie('access-token', token);
                         return res.json({Status:"Success", token, refreshToken})
                     }
                     else{

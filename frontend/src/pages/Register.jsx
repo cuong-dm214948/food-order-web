@@ -12,12 +12,16 @@ const USER_REGEX = /^[a-z]{2,24}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%]).{8,24}$/;
 
 const Register = () => {
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
     const [name, setName] = useState('');
     const [user, setUser] = useState('');
     const [pwd, setPwd] = useState('');
     const navigate =useNavigate()
     const handleSubmit = (e) => {
         e.preventDefault();
+        setLoading(true);
+        setError(false);
         // const v1 = USER_REGEX.test(user);
         // const v2 = PWD_REGEX.test(pwd);
         // if (!v1 || !v2) {
@@ -32,8 +36,11 @@ const Register = () => {
         })
         .then(res => {
             if (res.data.Status === "Success") {
+              setLoading(false);
                 navigate('/login')
             } else {
+              setLoading(false);
+              setError(true);
                 alert("Error")
             }
         })
@@ -157,9 +164,11 @@ const Register = () => {
 
                         <button disabled={!validName || !validPwd || !validMatch ? true : false}>Sign Up</button>
                 </div> */}
-                <button>Sign Up</button>
+                <button  disabled={loading}>
+          {loading ? 'Loading...' : 'Sign Up'}</button>
               </form>
               <Link to="/login">Already have an account? Login</Link>
+              <p className='text-red-700 mt-5'>{error && 'Something went wrong!'}</p>
             </Col>
           </Row>
         </Container>
