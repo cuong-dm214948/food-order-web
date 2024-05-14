@@ -73,7 +73,7 @@ const Login = () => {
 
                             <span clssname={statusHolder}>{loginStatus} </span>
                             <div className="form__group">
-                                <label htmlFor="username">Username:</label>
+                                <label htmlFor="username">Phone nummber:</label>
                                 <input
                                     type="text"
                                     placeholder="username"
@@ -98,13 +98,18 @@ const Login = () => {
                                 />
                             </div>
 
-                            <OAuth />
-                            <br></br>
+                            <p>chang password and/or recover password</p>
+
+
+                            
                             <button type="submit" className="addTOCart__btn">Sign In</button>
                           </form>
                       </section>
                   {/* /)}
               </> */}
+
+
+              <OAuth /> 
 
               <Link to="/register">CAN'T SIGN IN? CREATE ACCOUNT</Link>
               {/* //edit */}

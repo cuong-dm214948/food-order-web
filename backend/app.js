@@ -12,7 +12,7 @@ function generateAccessToken(username) {
     //"jwt-secret-key"
     // TOKEN_SECRET is used for data encryption and decryption
     const token = jwt.sign({ username },
-    process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+    process.env.TOKEN_SECRET, { expiresIn: '7200s' });
     return token;
     }
 
