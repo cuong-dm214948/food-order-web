@@ -6,7 +6,7 @@ import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { cartUiActions } from "../../store/shopping-cart/cartUiSlice";
 import "../../styles/header.css";
-import { signOut } from "firebase/auth";
+import { signOut, updateProfile } from "firebase/auth";
 
 const nav__links = [
   {
@@ -18,7 +18,7 @@ const nav__links = [
     path: "/menu",
   },
   {
-    display: "Cart", 
+    display: "Cart",
     path: "/cart",
   },
   {
@@ -32,7 +32,11 @@ const Header = () => {
   const headerRef = useRef();
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const dispatch = useDispatch();
-  const navigateTo = useNavigate();
+  const navigate = useNavigate();
+  const [auth, setAuth] = useState(false);
+  const [message, setMessage] = useState('');
+  const [username, setUserName] = useState('');
+
   const toggleMenu = () => {
     if (menuRef.current) {
       menuRef.current.classList.toggle("show__menu");
@@ -53,47 +57,46 @@ const Header = () => {
         }
       }
     };
-  
+
     window.addEventListener("scroll", handleScroll);
-  
+
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  const [auth, setAuth] = useState(false)
-  const [message, setMessage] = useState('')
-  const [username, setUserName] =useState('')
-  
-  axios.defaults.withCredentials = true;
-  console.log(auth)
-  useEffect(()=>{
-    axios.get('http://localhost:5001')
-        .then(res => {
-          console.log(res.data)
-            if (res.data.Status === "Success") {
-              setAuth(true)  
-              setUserName(res.data.username.username)
-            } else {
-              setAuth(false)
-              setMessage(res.data.Error)
-            }
-        })
-  },[])
 
-  const handleSignout = (e) => {
+  axios.defaults.withCredentials = true;
+
+  useEffect(() => {
+    axios.get('http://localhost:5001')
+      .then(res => {
+        if (res.data.Status === "Success") {
+          setAuth(true);
+          setUserName(res.data.username.username);
+        } else {
+          setAuth(false);
+          setMessage(res.data.Error);
+        }
+      });
+  }, []);
+
+  const handleSignout = () => {
     axios.get('http://localhost:5001/logout')
-    .then((res)=>{
-      console.log(res)
-      if(res.data.Status === 'Success'){
-        navigateTo('/login')
-        setAuth(false)
-        //dispatch(signOut())
-      }})
-  }
+      .then(res => {
+        if (res.data.Status === 'Success') {
+          navigate('/login');
+          setAuth(false);
+          //dispatch(signOut())
+        }
+      });
+  };
+
+  const handleUpdateProfile = () => {
+    navigate('/profile');
+  };
 
   return (
     <header className="header" ref={headerRef}>
       <Container>
         <div className="nav__wrapper d-flex align-items-center justify-content-between">
-          
           <div className="logo">
             <img src={logo} alt="logo" />
             <h5>Tasty Treat</h5>
@@ -119,29 +122,26 @@ const Header = () => {
           {/* ======== nav right icons ========= */}
           <div className="nav__right d-flex align-items-center gap-4">
             <span className="cart__icon" onClick={toggleCart}>
-              <i class="ri-shopping-basket-line"></i>
+              <i className="ri-shopping-basket-line"></i>
               <span className="cart__badge">{totalQuantity}</span>
             </span>
-              
+
             {auth ?
-            <span className="user">
-             
-                <i class="ri-user-line"></i>
-                <p>{username}</p>
-                <button onClick={handleSignout} >Sign out </button>
-              
-            </span>
-            :
-            <span className="user">
-              <Link to="/login">
-                <i class="ri-user-line"></i>  
-                  
-              </Link>
-            </span>
+              <span className="user">
+                <i className="ri-user-line"></i>
+                <p onClick={handleUpdateProfile}>{username}</p>
+                <button onClick={handleSignout}>Sign out</button>
+              </span>
+              :
+              <span className="user">
+                <Link to="/login">
+                  <i className="ri-user-line"></i>
+                </Link>
+              </span>
             }
 
             <span className="mobile__menu" onClick={toggleMenu}>
-              <i class="ri-menu-line"></i>
+              <i className="ri-menu-line"></i>
             </span>
           </div>
         </div>

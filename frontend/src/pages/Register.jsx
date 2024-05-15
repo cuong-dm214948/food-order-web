@@ -136,7 +136,7 @@ const Register = () => {
                 </button>
               </form>
               <Link to="/login">Already have an account? Login</Link>
-              {error && <p className="text-red-700 mt-5">Something went wrong!</p>}
+              
             </Col>
           </Row>
         </Container>

@@ -97,7 +97,9 @@ const Login = () => {
                                     required
                                 />
                             </div>
-
+                            <p className="text-red-700 mt-5">
+                {error ? error.message || 'Invalid username or password' : ''}
+                </p>
                             <p>chang password and/or recover password</p>
 
 
@@ -105,17 +107,10 @@ const Login = () => {
                             <button type="submit" className="addTOCart__btn">Sign In</button>
                           </form>
                       </section>
-                  {/* /)}
-              </> */}
-
-
               <OAuth /> 
 
               <Link to="/register">CAN'T SIGN IN? CREATE ACCOUNT</Link>
-              {/* //edit */}
-              <p className="text-red-700 mt-5">
-                {error ? error.message || 'Something went wrong!' : ''}
-                </p>
+
             </Col>
           </Row>
         </Container>
