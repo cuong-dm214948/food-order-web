@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/common-section/CommonSection";
 import { Container, Row, Col } from "reactstrap";
@@ -6,15 +6,52 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import ReCAPTCHA from "react-google-recaptcha";
 import "../styles/register.css";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+
+const USER_REGEX = /^[a-z0-9]{3,23}$/;
+const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@$&*()]).{8,24}$/;
 
 const Register = () => {
+  const [user, setUser] = useState('');
+  const [validName, setValidName] = useState(false);
+  const [userFocus, setUserFocus] = useState(false);
+
+  const [pwd, setPwd] = useState('');
+  const [validPwd, setValidPwd] = useState(false);
+  const [pwdFocus, setPwdFocus] = useState(false);
+
+  const [matchPwd, setMatchPwd] = useState('');
+  const [validMatch, setValidMatch] = useState(false);
+  const [matchFocus, setMatchFocus] = useState(false);
+
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [user, setUser] = useState('');
-  const [pwd, setPwd] = useState('');
   const [captchaToken, setCaptchaToken] = useState('');
   const [csrfToken, setCsrfToken] = useState('');
+  const [errMsg, setErrMsg] = useState('');
+  const [success, setSuccess] = useState(false);
+
   const navigate = useNavigate();
+  const userRef = useRef();
+  const errRef = useRef();
+
+  useEffect(() => {
+    userRef.current.focus();
+  }, []);
+
+  useEffect(() => {
+    setValidName(USER_REGEX.test(user));
+  }, [user]);
+
+  useEffect(() => {
+    setValidPwd(PWD_REGEX.test(pwd));
+    setValidMatch(pwd === matchPwd);
+  }, [pwd, matchPwd]);
+
+  useEffect(() => {
+    setErrMsg('');
+  }, [user, pwd, matchPwd]);
 
   useEffect(() => {
     // Fetch CSRF token from the server
@@ -31,6 +68,14 @@ const Register = () => {
     e.preventDefault();
     setLoading(true);
     setError(false);
+
+    const v1 = USER_REGEX.test(user);
+    const v2 = PWD_REGEX.test(pwd);
+    if (!v1 || !v2) {
+      setErrMsg("Invalid Entry");
+      setLoading(false);
+      return;
+    }
 
     if (!captchaToken) {
       setError(true);
@@ -52,6 +97,10 @@ const Register = () => {
 
       if (res.data.Status === "Success") {
         setLoading(false);
+        setSuccess(true);
+        setUser('');
+        setPwd('');
+        setMatchPwd('');
         navigate('/login');
       } else {
         setLoading(false);
@@ -60,6 +109,7 @@ const Register = () => {
     } catch (err) {
       setLoading(false);
       setError(true);
+      setErrMsg('Registration failed');
     }
   };
 
@@ -76,35 +126,92 @@ const Register = () => {
             <Col lg="6" md="6" sm="12" className="m-auto text-center">
               <form className="form mb-5" onSubmit={handleSubmit}>
                 <div className="form__group">
-                  <label htmlFor="username">Username:</label>
+                  <label htmlFor="username">
+                    Username:
+                    <FontAwesomeIcon icon={faCheck} className={validName ? "valid" : "hide"} />
+                    <FontAwesomeIcon icon={faTimes} className={validName || !user ? "hide" : "invalid"} />
+                  </label>
                   <input
                     type="text"
+                    id="username"
+                    ref={userRef}
+                    autoComplete="off"
                     onChange={(e) => setUser(e.target.value)}
+                    value={user}
                     placeholder="Enter username"
-                    name="username"
                     required
+                    aria-invalid={validName ? "false" : "true"}
+                    aria-describedby="uidnote"
+                    onFocus={() => setUserFocus(true)}
+                    onBlur={() => setUserFocus(false)}
                   />
+                  <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    3 to 23 characters. Must be lowercase letters and numbers.
+                  </p>
                 </div>
+
                 <div className="form__group">
-                  <label htmlFor="password">Password:</label>
+                  <label htmlFor="password">
+                    Password:
+                    <FontAwesomeIcon icon={faCheck} className={validPwd ? "valid" : "hide"} />
+                    <FontAwesomeIcon icon={faTimes} className={validPwd || !pwd ? "hide" : "invalid"} />
+                  </label>
                   <input
                     type="password"
+                    id="password"
                     onChange={(e) => setPwd(e.target.value)}
+                    value={pwd}
                     placeholder="Enter password"
-                    name="password"
                     required
+                    aria-invalid={validPwd ? "false" : "true"}
+                    aria-describedby="pwdnote"
+                    onFocus={() => setPwdFocus(true)}
+                    onBlur={() => setPwdFocus(false)}
                   />
+                  <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    8 to 24 characters. Must include uppercase and lowercase letters, a number, and a special character (!@$&*).
+                  </p>
                 </div>
+
+                <div className="form__group">
+                  <label htmlFor="confirm_pwd">
+                    Confirm Password:
+                    <FontAwesomeIcon icon={faCheck} className={validMatch && matchPwd ? "valid" : "hide"} />
+                    <FontAwesomeIcon icon={faTimes} className={validMatch || !matchPwd ? "hide" : "invalid"} />
+                  </label>
+                  <input
+                    type="password"
+                    id="confirm_pwd"
+                    onChange={(e) => setMatchPwd(e.target.value)}
+                    value={matchPwd}
+                    required
+                    aria-invalid={validMatch ? "false" : "true"}
+                    aria-describedby="confirmnote"
+                    onFocus={() => setMatchFocus(true)}
+                    onBlur={() => setMatchFocus(false)}
+                  />
+                  <p id="confirmnote" className={matchFocus && !validMatch ? "instructions" : "offscreen"}>
+                    <FontAwesomeIcon icon={faInfoCircle} />
+                    Must match the first password input field.
+                  </p>
+                </div>
+
                 <div className="form__group">
                   <ReCAPTCHA
-                    sitekey="your-site-key" // Replace with your site key
+                    sitekey="6Le4pd8pAAAAAHcnu7JFxKnY3tbhm6r2jH_hcMms"
                     onChange={onCaptchaChange}
                   />
                 </div>
-                <button disabled={loading}>{loading ? 'Loading...' : 'Sign Up'}</button>
+
+                <button className="addTOCart__btn" disabled={loading || !validName || !validPwd || !validMatch}>
+                  {loading ? 'Loading...' : 'Sign Up'}
+                </button>
+
+                {errMsg && <p ref={errRef} className="errmsg" aria-live="assertive">{errMsg}</p>}
               </form>
               <Link to="/login">Already have an account? Login</Link>
-              <p className='text-red-700 mt-5'>{error && 'Something went wrong!'}</p>
             </Col>
           </Row>
         </Container>

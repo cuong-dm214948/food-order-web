@@ -68,9 +68,10 @@ const Header = () => {
   useEffect(() => {
     axios.get('http://localhost:5001')
       .then(res => {
+        console.log("res dât" , res.data)
         if (res.data.Status === "Success") {
           setAuth(true);
-          setUserName(res.data.username.username);
+          setUserName(res.data.username);
         } else {
           setAuth(false);
           setMessage(res.data.Error);
@@ -82,7 +83,7 @@ const Header = () => {
     axios.get('http://localhost:5001/logout')
       .then(res => {
         if (res.data.Status === 'Success') {
-          navigate('/login');
+          //navigate('/login');
           setAuth(false);
           //dispatch(signOut())
         }

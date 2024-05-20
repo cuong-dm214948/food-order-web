@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const csurf = require('csurf');
-const axios = require('axios');
+const fetch = require('node-fetch');
 
 dotenv.config({ path: './.env' });
 
@@ -20,6 +20,12 @@ app.use(cors({
 }));
 
 const csrfProtection = csurf({ cookie: true });
+app.use(csrfProtection);
+
+app.use((req, res, next) => {
+  console.log('CSRF Token:', req.csrfToken());
+  next();
+});
 
 const db = mysql.createConnection({
   host: process.env.DATABASE_HOST,
@@ -34,31 +40,20 @@ function generateAccessToken(username, userType) {
 }
 
 const authMiddleware = (req, res, next) => {
-  const cookieHeader = req.headers.cookie;
-  if (!cookieHeader) return res.status(401).json({ Error: "No token provided" });
-
-  const cookiePairs = cookieHeader.split(';');
-  let token = null;
-  for (const pair of cookiePairs) {
-    const [key, value] = pair.trim().split('=');
-    if (key === 'access-token') {
-      token = value;
-      break;
-    }
-  }
+  const token = req.cookies['access-token'];
   if (!token) {
     return res.status(401).json({ Error: "No token provided" });
-  } else {
-    jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
-      if (err) {
-        return res.status(401).json({ Error: "Invalid token" });
-      } else {
-        req.username = decoded.username;
-        req.userType = decoded.userType;
-        next();
-      }
-    });
   }
+
+  jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
+    if (err) {
+      return res.status(401).json({ Error: "Invalid token" });
+    } else {
+      req.username = decoded.username;
+      req.userType = decoded.userType;
+      next();
+    }
+  });
 };
 
 app.get('/', authMiddleware, (req, res) => {
@@ -75,14 +70,19 @@ db.connect((error) => {
 
 const saltRounds = 10;
 
-// Helper function to validate CAPTCHA
 const validateCaptcha = async (captchaToken) => {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
-  const url = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captchaToken}`;
+  if (!secretKey) {
+    console.error('reCAPTCHA secret key is not set.');
+    return false;
+  }
 
+  const verifyUrl = `https://www.google.com/recaptcha/api/siteverify?secret=${secretKey}&response=${captchaToken}`;
+  
   try {
-    const response = await axios.post(url);
-    return response.data.success;
+    const recaptchaRes = await fetch(verifyUrl, { method: "POST" });
+    const recaptchaJson = await recaptchaRes.json();
+    return recaptchaJson.success;
   } catch (err) {
     console.error('Error validating CAPTCHA', err);
     return false;
@@ -93,13 +93,14 @@ app.get('/csrf-token', csrfProtection, (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
-app.post('/register', csrfProtection, async (req, res) => {
+app.post('/register', async (req, res) => {
   const captchaValid = await validateCaptcha(req.body.captchaToken);
   if (!captchaValid) {
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  const sql = "INSERT INTO users (username, password, user_type) VALUES (?, ?, ?)";
+  const sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {
       return res.status(500).send("Internal server error");
@@ -108,9 +109,7 @@ app.post('/register', csrfProtection, async (req, res) => {
       if (err) {
         return res.status(500).send("Internal server error");
       }
-      const sentUsername = req.body.username;
-      const userType = req.body.userType; // Get user type from the request body
-      const values = [sentUsername, hash, userType];
+      const values = [req.body.username, hash];
       db.query(sql, values, (err, result) => {
         if (err) {
           return res.status(500).send("Internal server error");
@@ -124,31 +123,35 @@ app.post('/register', csrfProtection, async (req, res) => {
 let refreshTokens = [];
 
 app.post('/login', csrfProtection, async (req, res) => {
+  console.log()
   const captchaValid = await validateCaptcha(req.body.captchaToken);
   if (!captchaValid) {
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  const sentusername = req.body.username;
-  const values = [sentusername];
   const sql = "SELECT * FROM users WHERE username = ?";
-  db.query(sql, values, (err, results) => {
+  db.query(sql, [req.body.username], (err, results) => {
     if (err) {
       return res.json({ Error: err });
     }
     if (results.length > 0) {
+      console.log(req.body.password.toString(), results[0].password)
       bcrypt.compare(req.body.password.toString(), results[0].password, (err, response) => {
-        if (err) return res.json({ Error: "Invalid username or password" });
+        console.log(response)
+        if (err) { 
+        
+          return res.json({ Error: "Invalid1 username or password" });}
         if (response) {
           const username = results[0].username;
-          const userType = results[0].user_type; // Assuming user_type column exists in your database
+          const userType = results[0].user_type;
           const token = generateAccessToken(username, userType);
           const refreshToken = jwt.sign({ username, userType }, process.env.REFRESH_TOKEN_SECRET);
           refreshTokens.push(refreshToken);
-          res.cookie('access-token', token);
+          res.cookie('access-token', token, { httpOnly: true, secure: true });
           return res.json({ Status: "Success", token, refreshToken });
         } else {
-          return res.json({ Error: "Invalid username or password" });
+          console.log("rres",response)
+          return res.json({ Error: "Invalid2 username or password" });
         }
       });
     } else {
@@ -175,21 +178,17 @@ app.post('/token', csrfProtection, (req, res) => {
 });
 
 app.post('/checkout', csrfProtection, async (req, res) => {
-    const { cartItems, totalAmount, captchaToken } = req.body;
+  const { cartItems, totalAmount, captchaToken } = req.body;
 
-    const isCaptchaValid = await validateCaptcha(captchaToken);
-    if (!isCaptchaValid) {
-        return res.status(400).json({ status: 'Error', message: 'Invalid CAPTCHA' });
-    }
+  const isCaptchaValid = await validateCaptcha(captchaToken);
+  if (!isCaptchaValid) {
+    return res.status(400).json({ status: 'Error', message: 'Invalid CAPTCHA' });
+  }
 
-    // Process the order here
-    // You would typically save the order details in the database
-    // and handle payment processing, etc.
+  // Process the order here
 
-    return res.json({ status: 'Success', message: 'Order processed successfully' });
+  return res.json({ status: 'Success', message: 'Order processed successfully' });
 });
-
-
 
 app.post('/logout', csrfProtection, (req, res) => {
   const { token } = req.body;
