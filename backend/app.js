@@ -109,7 +109,7 @@ app.post('/register', csrfProtection, async (req, res) => {
         return res.status(500).send("Internal server error");
       }
       const sentUsername = req.body.username;
-      const userType = req.body.userType; // Get user type from the request body
+      const userType = "user"; 
       const values = [sentUsername, hash, userType];
       db.query(sql, values, (err, result) => {
         if (err) {
@@ -141,7 +141,7 @@ app.post('/login', csrfProtection, async (req, res) => {
         if (err) return res.json({ Error: "Invalid username or password" });
         if (response) {
           const username = results[0].username;
-          const userType = results[0].user_type; // Assuming user_type column exists in your database
+          const userType = results[0].user_type; 
           const token = generateAccessToken(username, userType);
           const refreshToken = jwt.sign({ username, userType }, process.env.REFRESH_TOKEN_SECRET);
           refreshTokens.push(refreshToken);
@@ -183,8 +183,7 @@ app.post('/checkout', csrfProtection, async (req, res) => {
     }
 
     // Process the order here
-    // You would typically save the order details in the database
-    // and handle payment processing, etc.
+
 
     return res.json({ status: 'Success', message: 'Order processed successfully' });
 });
