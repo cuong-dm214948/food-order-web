@@ -91,14 +91,19 @@ const Header = () => {
   };
 
   const handleUpdateProfile = () => {
-    navigate('/profile');
+    navigate('/Accountinfo');
   };
+
+  const handleLogo = () => {
+    navigate('/');
+  };
+
 
   return (
     <header className="header" ref={headerRef}>
       <Container>
         <div className="nav__wrapper d-flex align-items-center justify-content-between">
-          <div className="logo">
+          <div className="logo" onClick={handleLogo}>
             <img src={logo} alt="logo" />
             <h5>Tasty Treat</h5>
           </div>

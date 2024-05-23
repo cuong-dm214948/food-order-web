@@ -45,6 +45,7 @@ const Checkout = () => {
       .then(response => {
         if (response.data.status === 'Success') {
           setOrderSuccess(true);
+
         } else {
           setError(true);
         }
@@ -64,6 +65,7 @@ const Checkout = () => {
         <div className="checkoutTitleContainer">
           <AiFillCheckCircle className="checkoutIcon" />
           <h3>Thank you for your order!</h3>
+          <h4>We are already sent order payment to your email. PLease verify!</h4>
         </div>
         <span>
           Your order is being processed and will be served as fast as possible.
@@ -90,12 +92,12 @@ const Checkout = () => {
               <div className="mt-4">
                 <h6>
                   Total: 
-                  <span className="cart__subtotal">{totalAmount}</span>$
+                  <span className="cart__subtotal">{totalAmount}</span>K
                 </h6>
                 <p>Taxes already included</p>
                 <form onSubmit={handleCheckout}>
                   <ReCAPTCHA
-                    sitekey="YOUR_RECAPTCHA_SITE_KEY"
+                    sitekey="6Le4pd8pAAAAAHcnu7JFxKnY3tbhm6r2jH_hcMms"
                     onChange={token => setCaptchaToken(token)}
                   />
                   <button className="addTOCart__btn mt-4" type="submit" disabled={loading}>

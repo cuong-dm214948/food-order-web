@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 const cookieParser = require('cookie-parser');
 const csurf = require('csurf');
 const fetch = require('node-fetch');
+const  nodemailer = require('nodemailer');
 
 dotenv.config({ path: './.env' });
 
@@ -185,7 +186,51 @@ app.post('/checkout', csrfProtection, async (req, res) => {
     return res.status(400).json({ status: 'Error', message: 'Invalid CAPTCHA' });
   }
 
-  // Process the order here
+  const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: 'domanhcuong03072003@gmail.com',
+      pass: ''
+    }
+  });
+  
+  const mailOptions = {
+    from: 'domanhcuong03072003@gmail.com',
+    to: 'cuong.dm214948@sis.hust.edu.vn',
+    subject: 'Order Payment Confirmation',
+    text: `Dear [Customer's Name],
+
+We are pleased to inform you that your payment for Order #[Order Number] has been successfully processed.
+
+Thank you for your purchase! Your order is now being prepared for shipment, and you will receive a notification with tracking details once your order has been dispatched.
+
+Here are the details of your transaction:
+
+Order Number: [Order Number A01]
+Order Date: [Order Date]
+Payment Amount: {totalAmount}
+Payment Method: vnpay
+
+If you have any questions or need further assistance, please do not hesitate to contact our customer support team at [Customer Support Email] or [Customer Support Phone Number].
+
+Thank you for shopping with us!
+
+Best regards,
+
+[Your Company Name]
+[Company Address]
+[Company Email]
+[Company Phone Number]`,
+
+};
+
+  transporter.sendMail(mailOptions, function(error, info){
+    if (error) {
+      console.log(error);
+    } else {
+      console.log('Email sent: ' + info.response);
+    }
+  });
 
   return res.json({ status: 'Success', message: 'Order processed successfully' });
 });
