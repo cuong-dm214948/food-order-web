@@ -87,6 +87,7 @@ const Register = () => {
       const res = await axios.post('http://localhost:5001/register', {
         username: user,
         password: pwd,
+        role: 'user',
         captchaToken: captchaToken,
       }, {
         headers: {

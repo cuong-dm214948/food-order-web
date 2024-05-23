@@ -35,11 +35,6 @@ const db = mysql.createConnection({
   database: process.env.DATABASE,
 });
 
-function generateAccessToken(username, userType) {
-  const token = jwt.sign({ username, userType }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
-  return token;
-}
-
 const authMiddleware = (req, res, next) => {
   const token = req.cookies['access-token'];
   if (!token) {
@@ -100,7 +95,7 @@ app.post('/register', async (req, res) => {
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  const sql = "INSERT INTO users (username, password) VALUES (?, ?)";
+  const sql = "INSERT INTO users (username, password, role) VALUES (?, ?,?)";
 
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {
@@ -110,7 +105,7 @@ app.post('/register', async (req, res) => {
       if (err) {
         return res.status(500).send("Internal server error");
       }
-      const values = [req.body.username, hash];
+      const values = [req.body.username, hash, req.body.role];
       db.query(sql, values, (err, result) => {
         if (err) {
           return res.status(500).send("Internal server error");
@@ -144,11 +139,11 @@ app.post('/login', csrfProtection, async (req, res) => {
           return res.json({ Error: "Invalid1 username or password" });}
         if (response) {
           const username = results[0].username;
-          const userType = results[0].user_type;
-          const token = generateAccessToken(username, userType);
-          const refreshToken = jwt.sign({ username, userType }, process.env.REFRESH_TOKEN_SECRET);
+          const role = results[0].role;
+          const token =jwt.sign({ username, userType }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+          const refreshToken = jwt.sign({ username, role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '25200s' });
           refreshTokens.push(refreshToken);
-          res.cookie('access-token', token, { httpOnly: true, secure: true });
+          res.cookie('access-token', token, { httpOnly: true, secure: true, sameSite:'none' });
           return res.json({ Status: "Success", token, refreshToken });
         } else {
           console.log("rres",response)
@@ -180,35 +175,38 @@ app.post('/token', csrfProtection, (req, res) => {
 
 app.post('/checkout', csrfProtection, async (req, res) => {
   const { cartItems, totalAmount, captchaToken } = req.body;
-
+  console.log(cartItems)
+  // Validate CAPTCHA
   const isCaptchaValid = await validateCaptcha(captchaToken);
   if (!isCaptchaValid) {
     return res.status(400).json({ status: 'Error', message: 'Invalid CAPTCHA' });
   }
 
+  // Email credentials should be stored in environment variables for security
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'domanhcuong03072003@gmail.com',
-      pass: ''
-    }
+      user: "domanhcuong03072003@gmail.com",
+      pass: "Cuong0307)",
+    },
   });
-  
+
+  // Compose email
   const mailOptions = {
     from: 'domanhcuong03072003@gmail.com',
     to: 'cuong.dm214948@sis.hust.edu.vn',
     subject: 'Order Payment Confirmation',
-    text: `Dear [Customer's Name],
+    text: `Dear Customer,
 
-We are pleased to inform you that your payment for Order #[Order Number] has been successfully processed.
+We are pleased to inform you that your payment for Order #001 has been successfully processed.
 
 Thank you for your purchase! Your order is now being prepared for shipment, and you will receive a notification with tracking details once your order has been dispatched.
 
 Here are the details of your transaction:
 
-Order Number: [Order Number A01]
-Order Date: [Order Date]
-Payment Amount: {totalAmount}
+Order Number: 001
+Order Date: ${new Date().toLocaleDateString()}
+Payment Amount: ${totalAmount}
 Payment Method: vnpay
 
 If you have any questions or need further assistance, please do not hesitate to contact our customer support team at [Customer Support Email] or [Customer Support Phone Number].
@@ -217,18 +215,18 @@ Thank you for shopping with us!
 
 Best regards,
 
-[Your Company Name]
-[Company Address]
-[Company Email]
-[Company Phone Number]`,
+TASTY FOOD ORDER
+NO.1 DAI CO VIET
+cuong.dm214948@sis.hust.edu.vn
+0397825923`,
+  };
 
-};
-
-  transporter.sendMail(mailOptions, function(error, info){
+  // Send email
+  transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log(error);
+      console.log('Error sending email:', error);
     } else {
-      console.log('Email sent: ' + info.response);
+      console.log('Email sent:', info.response);
     }
   });
 

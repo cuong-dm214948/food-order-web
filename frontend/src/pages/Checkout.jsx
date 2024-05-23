@@ -122,7 +122,7 @@ const Tr = ({ item }) => {
         <img src={image01} alt="" />
       </td>
       <td className="text-center">{title}</td>
-      <td className="text-center">${price}</td>
+      <td className="text-center">{price}K</td>
       <td className="text-center">{quantity}px</td>
     </tr>
   );
