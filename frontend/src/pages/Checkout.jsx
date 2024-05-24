@@ -65,8 +65,10 @@ const Checkout = () => {
         <div className="checkoutTitleContainer">
           <AiFillCheckCircle className="checkoutIcon" />
           <h3>Thank you for your order!</h3>
-          <h4>We are already sent order payment to your email. PLease verify!</h4>
+          
+          
         </div>
+        <h4>We are already sent order payment to your email. PLease verify!</h4>
         <span>
           Your order is being processed and will be served as fast as possible.
         </span>

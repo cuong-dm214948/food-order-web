@@ -24,7 +24,6 @@ const csrfProtection = csurf({ cookie: true });
 app.use(csrfProtection);
 
 app.use((req, res, next) => {
-  console.log('CSRF Token:', req.csrfToken());
   next();
 });
 
@@ -175,23 +174,34 @@ app.post('/token', csrfProtection, (req, res) => {
 
 app.post('/checkout', csrfProtection, async (req, res) => {
   const { cartItems, totalAmount, captchaToken } = req.body;
-  console.log(cartItems)
-  // Validate CAPTCHA
+
   const isCaptchaValid = await validateCaptcha(captchaToken);
   if (!isCaptchaValid) {
     return res.status(400).json({ status: 'Error', message: 'Invalid CAPTCHA' });
   }
 
-  // Email credentials should be stored in environment variables for security
   const transporter = nodemailer.createTransport({
     service: 'gmail',
+    port: 465,
+    secure:true,
+    logger:true,
+    
+    secureConnection:false,
+
     auth: {
       user: "domanhcuong03072003@gmail.com",
-      pass: "Cuong0307)",
+      pass: "uqfb whfd evlq wlbz",
     },
+    tls:{
+      rejectUnauthorized:true
+    }
   });
 
-  // Compose email
+// attachments=[]
+
+const currentDate = new Date();
+const dateString = currentDate.toLocaleDateString();
+const timeString = currentDate.toLocaleTimeString();
   const mailOptions = {
     from: 'domanhcuong03072003@gmail.com',
     to: 'cuong.dm214948@sis.hust.edu.vn',
@@ -205,13 +215,13 @@ Thank you for your purchase! Your order is now being prepared for shipment, and 
 Here are the details of your transaction:
 
 Order Number: 001
-Order Date: ${new Date().toLocaleDateString()}
-Payment Amount: ${totalAmount}
-Payment Method: vnpay
+Order Date:  ${dateString} ${timeString}
+Payment Amount: ${totalAmount}K
+Payment Method: VNPay
 
 If you have any questions or need further assistance, please do not hesitate to contact our customer support team at [Customer Support Email] or [Customer Support Phone Number].
 
-Thank you for shopping with us!
+Thanks for shopping with our store!
 
 Best regards,
 
@@ -219,6 +229,12 @@ TASTY FOOD ORDER
 NO.1 DAI CO VIET
 cuong.dm214948@sis.hust.edu.vn
 0397825923`,
+attachments: [
+  {
+    filename: 'cartItems.json',
+    content: JSON.stringify(cartItems, null, 2) // Convert cartItems to JSON string with 2-space indentation
+  }
+]
   };
 
   // Send email
