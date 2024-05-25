@@ -58,7 +58,7 @@ const offset = hmacHash[19] & 0xf
 const truncatedHash = ((hmacHash[offset++] & 0x7f) << 24 |
 (hmacHash[offset++] & 0xff) << 16 |
 (hmacHash[offset++] & 0xff) << 8 |
-(hmacHash[offset++] & 0xff) |)
+(hmacHash[offset++] & 0xff) )
 const finalOTP = truncatedHash % (10 ^ 6)
 
 app.listen(5000, () => console.log('listening on port: 5000'));

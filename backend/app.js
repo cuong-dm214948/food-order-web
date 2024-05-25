@@ -104,6 +104,7 @@ app.post('/register', async (req, res) => {
 
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {
+      logger.error('Error generating salt:', err);
       return res.status(500).send("Internal server error");
     }
     bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
@@ -115,6 +116,7 @@ app.post('/register', async (req, res) => {
         if (err) {
           return res.status(500).send("Internal server error");
         }
+        logger.info(`User ${username} has registered in successfully.`);
         res.send({ Status: "Success" });
       });
     });
@@ -134,11 +136,13 @@ app.post('/login', csrfProtection, async (req, res) => {
   const sql = "SELECT * FROM users WHERE username = ?";
   db.query(sql, [req.body.username], (err, results) => {
     if (err) {
+      logger.error('Error comparing username:', err);
       return res.json({ Error: err });
     }
     if (results.length > 0) {
       bcrypt.compare(req.body.password.toString(), results[0].password, (err, response) => {
         if (err) { 
+          logger.error('Error comparing passwords:', err);
           return res.json({ Error: "Invalid username or password" });
         }
         if (response) {
@@ -263,6 +267,7 @@ app.post('/profile', csrfProtection, authMiddleware, (req, res) => {
     if (err) {
       return res.status(500).json({ Error: 'Internal server error' });
     }
+    logger.info(`User ${username} has updated profile successfully.`);
     return res.json({ Status: 'Profile updated successfully' });
   });
 });
