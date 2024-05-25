@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Container, Row, Col } from 'reactstrap';
 import '../styles/register.css';
 
@@ -7,28 +7,41 @@ const Profile = () => {
   const [mobileNo, setMobileNo] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
+  const [csrfToken, setCsrfToken] = useState('');
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    const fetchCsrfToken = async () => {
+      try {
+        const response = await fetch('https://localhost:5001/csrf-token', {
+          credentials: 'include',
+        });
+        const data = await response.json();
+        setCsrfToken(data.csrfToken);
+      } catch (error) {
+        console.error('Error fetching CSRF token:', error);
+      }
+    };
+
+    fetchCsrfToken();
+  }, []);
 
   const validateInputs = () => {
     const errors = {};
 
-    // Full Name: Allow only alphabets and spaces
     if (!/^[A-Za-z\s]+$/.test(fullName)) {
       errors.fullName = 'Full name should contain only alphabets and spaces.';
     }
 
-    // Mobile No.: Allow only digits and should be 10 digits long
     if (!/^\d{10}$/.test(mobileNo)) {
       errors.mobileNo = 'Mobile number should contain exactly 10 digits.';
     }
 
-    // Email: Basic email pattern validation
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       errors.email = 'Email is invalid.';
     }
 
-    // Address: Must contain both numbers and text
     if (!/\d/.test(address) || !/[A-Za-z]/.test(address)) {
       errors.address = 'Address should contain both numbers and text.';
     }
@@ -48,14 +61,15 @@ const Profile = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken,  // Include CSRF token in headers
           },
+          credentials: 'include',
           body: JSON.stringify({ fullName, mobileNo, email, address }),
         });
 
         if (response.ok) {
           const data = await response.json();
           setSuccessMessage('Profile updated successfully!');
-          // Optionally, handle the response data
           console.log(data);
         } else {
           const errorData = await response.json();
