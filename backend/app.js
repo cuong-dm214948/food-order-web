@@ -94,7 +94,7 @@ app.post('/register', async (req, res) => {
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  const sql = "INSERT INTO users (username, password, role) VALUES (?, ?,?)";
+  const sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
 
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {
@@ -139,7 +139,7 @@ app.post('/login', csrfProtection, async (req, res) => {
         if (response) {
           const username = results[0].username;
           const role = results[0].role;
-          const token =jwt.sign({ username, userType }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+          const token = jwt.sign({ username, role }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
           const refreshToken = jwt.sign({ username, role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '25200s' });
           refreshTokens.push(refreshToken);
           res.cookie('access-token', token, { httpOnly: true, secure: true, sameSite:'none' });
@@ -174,36 +174,32 @@ app.post('/token', csrfProtection, (req, res) => {
 
 app.post('/checkout', csrfProtection, async (req, res) => {
   const { cartItems, totalAmount, captchaToken } = req.body;
-
   const isCaptchaValid = await validateCaptcha(captchaToken);
   if (!isCaptchaValid) {
     return res.status(400).json({ status: 'Error', message: 'Invalid CAPTCHA' });
   }
-
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     port: 465,
     secure:true,
     logger:true,
-    
     secureConnection:false,
-
     auth: {
-      user: "domanhcuong03072003@gmail.com",
-      pass: "uqfb whfd evlq wlbz",
+      user: process.env.EMAIL,
+      pass: process.env.PASSWORD,
     },
     tls:{
       rejectUnauthorized:true
     }
   });
 
-// attachments=[]
-
-const currentDate = new Date();
-const dateString = currentDate.toLocaleDateString();
-const timeString = currentDate.toLocaleTimeString();
+  // receiver user email update
+  // attachment update
+  const currentDate = new Date();
+  const dateString = currentDate.toLocaleDateString();
+  const timeString = currentDate.toLocaleTimeString();
   const mailOptions = {
-    from: 'domanhcuong03072003@gmail.com',
+    from: process.env.EMAIL,
     to: 'cuong.dm214948@sis.hust.edu.vn',
     subject: 'Order Payment Confirmation',
     text: `Dear Customer,
@@ -248,6 +244,8 @@ attachments: [
 
   return res.json({ status: 'Success', message: 'Order processed successfully' });
 });
+
+
 
 app.post('/logout', csrfProtection, (req, res) => {
   const { token } = req.body;

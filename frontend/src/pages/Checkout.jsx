@@ -9,6 +9,8 @@ import CommonSection from '../components/UI/common-section/CommonSection';
 import "../styles/checkout.css";
 import { AiFillCheckCircle } from "react-icons/ai";
 
+const RECAPTCHA_SITEKEY = process.env.REACT_APP_CLIENT_SITE_KEY;
+
 const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
@@ -28,6 +30,7 @@ const Checkout = () => {
         console.error('Error fetching CSRF token:', error);
       });
   }, []);
+
 
   const handleCheckout = (e) => {
     e.preventDefault();
@@ -59,6 +62,10 @@ const Checkout = () => {
       });
   };
 
+  const handleCash =()=>{
+    setOrderSuccess(true);
+  }
+
   if (orderSuccess) {
     return (
       <div className="checkoutMessage">
@@ -83,7 +90,7 @@ const Checkout = () => {
         <Container>
           <Row>
             <Col lg="12">
-              <h5 className="mb-5">Summary of your order</h5>
+              <h5 className="mb-5">Confirmation of your order</h5>
               <table className="table table-borderless mb-5 align-middle">
                 <tbody>
                   {cartItems.map((item) => (
@@ -97,15 +104,21 @@ const Checkout = () => {
                   <span className="cart__subtotal">{totalAmount}</span>K
                 </h6>
                 <p>Taxes already included</p>
-                <form onSubmit={handleCheckout}>
+               
                   <ReCAPTCHA
-                    sitekey="6Le4pd8pAAAAAHcnu7JFxKnY3tbhm6r2jH_hcMms"
-                    onChange={token => setCaptchaToken(token)}
+                    sitekey = {RECAPTCHA_SITEKEY}
+                    onChange = {token => setCaptchaToken(token)}
                   />
-                  <button className="addTOCart__btn mt-4" type="submit" disabled={loading}>
-                    {loading ? 'Processing...' : 'Proceed to Checkout'}
+
+                  <button className="addTOCart__btn mt-4" onClick={handleCash} disabled={loading}>
+                    {loading ? 'Processing...' : 'Thanh toán khi nhận hàng'}
                   </button>
-                </form>
+                  
+                  <button className="addTOCart__btn mt-4" onClick={handleCheckout} disabled={loading}>
+                    {loading ? 'Processing...' : 'VNPay'}
+                  </button>
+
+               
                 {error && <p className='text-red-700 mt-5'>Something went wrong!</p>}
               </div>
             </Col>
