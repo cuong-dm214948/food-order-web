@@ -100,8 +100,8 @@ const Login = () => {
         <Container>
           <Row>
             <Col lg="6" md="6" sm="12" className="m-auto text-center">
-              <section>
-                <form className="form mb-5" onSubmit={handleSubmit}>
+              
+                <form className="form" onSubmit={handleSubmit}>
                   <span className={statusHolder}>{loginStatus}</span>
                   <div className="form__group">
                     <label htmlFor="username">Username:</label>
@@ -135,7 +135,7 @@ const Login = () => {
                     {loading ? 'Signing In...' : 'Sign In'}
                   </button>
                 </form>
-              </section>
+              
 
               <OAuth />
               <Link to="/register">CAN'T SIGN IN? CREATE ACCOUNT</Link>

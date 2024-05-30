@@ -123,7 +123,7 @@ const products = [
   {
     id: "09",
     title: "Extravaganza",
-    price: 210.0,
+    price: 200.0,
     image01: image38,
     category: "Pizza",
 
@@ -138,7 +138,7 @@ const products = [
   {
     id: "10",
     title: "Khai vi tong hop",
-    price: 24.0,
+    price: 90.0,
     image01: image20,
     category: "Side",
 
@@ -148,7 +148,7 @@ const products = [
   {
     id: "11",
     title: "Beef croisant ",
-    price: 35.0,
+    price: 90.0,
     image01: image21,
     category: "Side",
 
@@ -158,7 +158,7 @@ const products = [
   {
     id: "12",
     title: "Popcorn ",
-    price: 35.0,
+    price: 45.0,
     image01: image22,
     category: "Side",
 
@@ -168,7 +168,7 @@ const products = [
   {
     id: "13",
     title: "Pasta",
-    price: 35.0,
+    price: 80.0,
     image01: image23,
     image02: image29,
     image03: image28,
@@ -180,7 +180,7 @@ const products = [
   {
     id: "14",
     title: "Bread ",
-    price: 35.0,
+    price: 55.0,
     image01: image24,
     category: "Side",
 
@@ -190,7 +190,7 @@ const products = [
   {
     id: "15",
     title: "Potato Wedge ",
-    price: 35.0,
+    price: 45.0,
     image01: image25,
     category: "Side",
 
@@ -200,7 +200,7 @@ const products = [
   {
     id: "16",
     title: "Sausage",
-    price: 35.0,
+    price: 45.0,
     image01: image26,
     category: "Side",
 
@@ -210,7 +210,7 @@ const products = [
   {
     id: "20",
     title: "Chocolava ",
-    price: 35.0,
+    price: 45.0,
     image01: image1,
     category: "Desert",
     desc: "Chocolate tan chảy",
@@ -237,7 +237,7 @@ const products = [
   {
     id: "30",
     title: "Chia seed ",
-    price: 35.0,
+    price: 15.0,
     image01: image17,
     image02: image11,
     category: "Drink",
@@ -248,7 +248,7 @@ const products = [
   {
     id: "31",
     title: "Sprite ",
-    price: 35.0,
+    price: 15.0,
     image01: image12,
     image02: image13,
     category: "Drink",
@@ -259,7 +259,7 @@ const products = [
   {
     id: "32",
     title: "Coke",
-    price: 35.0,
+    price: 15.0,
     image01: image14,
     image02: image13,
     category: "Drink",
@@ -271,7 +271,7 @@ const products = [
   {
     id: "33",
     title: "Dasani ",
-    price: 35.0,
+    price: 15.0,
     image01: image16,
     category: "Drink",
 
@@ -281,7 +281,7 @@ const products = [
   {
     id: "34",
     title: "Panta ",
-    price: 35.0,
+    price: 15.0,
     image01: image18,
     image02: image19,
     category: "Drink",

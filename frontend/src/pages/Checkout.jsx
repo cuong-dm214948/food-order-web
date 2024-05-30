@@ -18,6 +18,7 @@ const Checkout = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingCash, setLoadingCash] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -62,8 +63,13 @@ const Checkout = () => {
       });
   };
 
-  const handleCash =()=>{
-    setOrderSuccess(true);
+  const handleCash = () => {
+    setLoadingCash(true);
+    
+    setTimeout(() => {
+      setLoadingCash(false);
+      setOrderSuccess(true);
+    }, 1000); // 1 second delay
   }
 
   if (orderSuccess) {
@@ -109,16 +115,15 @@ const Checkout = () => {
                     sitekey = {RECAPTCHA_SITEKEY}
                     onChange = {token => setCaptchaToken(token)}
                   />
-
-                  <button className="addTOCart__btn mt-4" onClick={handleCash} disabled={loading}>
-                    {loading ? 'Processing...' : 'Thanh toán khi nhận hàng'}
+              
+                  <button className="addTOCart__btn mt-4" onClick={handleCash} disabled={loadingCash}>
+                    {loadingCash ? 'Processing...' : 'Thanh toán khi nhận hàng'}
                   </button>
                   
                   <button className="addTOCart__btn mt-4" onClick={handleCheckout} disabled={loading}>
                     {loading ? 'Processing...' : 'VNPay'}
                   </button>
-
-               
+                  
                 {error && <p className='text-red-700 mt-5'>Something went wrong!</p>}
               </div>
             </Col>

@@ -29,6 +29,7 @@ const Cart = () => {
                         <Tr item={item} key={item.id} />
                       ))}
                     </tbody>
+
                   </table>
                 </>
               )}
@@ -69,7 +70,7 @@ const Tr = (props) => {
         <img src={image01} alt="" />
       </td>
       <td className="text-center">{title}</td>
-      <td className="text-center">${price}</td>
+      <td className="text-center">{price}K</td>
       <td className="text-center">{quantity}px</td>
       <td className="text-center cart__item-del">
         <i className="ri-delete-bin-line" onClick={deleteItem}></i>

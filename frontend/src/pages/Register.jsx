@@ -87,7 +87,7 @@ const Register = () => {
       const res = await axios.post('http://localhost:5001/register', {
         username: user,
         password: pwd,
-        role: 'user',
+     
         captchaToken: captchaToken,
       }, {
         headers: {
@@ -148,7 +148,7 @@ const Register = () => {
                   />
                   <p id="uidnote" className={userFocus && user && !validName ? "instructions" : "offscreen"}>
                     <FontAwesomeIcon icon={faInfoCircle} />
-                    3 to 23 characters. Must be lowercase letters and numbers.
+                    3 to 23 characters. Letters and numbers.
                   </p>
                 </div>
 
@@ -172,7 +172,7 @@ const Register = () => {
                   />
                   <p id="pwdnote" className={pwdFocus && !validPwd ? "instructions" : "offscreen"}>
                     <FontAwesomeIcon icon={faInfoCircle} />
-                    8 to 24 characters. Must include uppercase and lowercase letters, a number, and a special character (!@$&*).
+                    8 to 24 characters. At least letters, numbers, and special characters (!@$&*).
                   </p>
                 </div>
 
@@ -185,6 +185,7 @@ const Register = () => {
                   <input
                     type="password"
                     id="confirm_pwd"
+                    placeholder="Confirm password"
                     onChange={(e) => setMatchPwd(e.target.value)}
                     value={matchPwd}
                     required

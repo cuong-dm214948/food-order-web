@@ -43,6 +43,12 @@ const Header = () => {
     }
   }
 
+  const closeMenu = () => {
+    if (menuRef.current) {
+      menuRef.current.classList.remove("show__menu");
+    }
+  }
+
   const toggleCart = () => {
     dispatch(cartUiActions.toggle());
   };
@@ -68,7 +74,6 @@ const Header = () => {
   useEffect(() => {
     axios.get('http://localhost:5001')
       .then(res => {
-        console.log("res dât" , res.data)
         if (res.data.Status === "Success") {
           setAuth(true);
           setUserName(res.data.username);
@@ -83,9 +88,7 @@ const Header = () => {
     axios.get('http://localhost:5001/logout')
       .then(res => {
         if (res.data.Status === 'Success') {
-          //navigate('/login');
           setAuth(false);
-          //dispatch(signOut())
         }
       });
   };
@@ -98,7 +101,6 @@ const Header = () => {
     navigate('/');
   };
 
-
   return (
     <header className="header" ref={headerRef}>
       <Container>
@@ -109,8 +111,8 @@ const Header = () => {
           </div>
 
           {/* ======= menu ======= */}
-          <div className="navigation" ref={menuRef} onClick={toggleMenu}>
-            <div className="menu d-flex align-items-center gap-5">
+          <div className="navigation" ref={menuRef}>
+            <div className="menu d-flex align-items-center gap-5" onClick={closeMenu} >
               {nav__links.map((item, index) => (
                 <NavLink
                   to={item.path}
@@ -118,10 +120,12 @@ const Header = () => {
                   className={(navClass) =>
                     navClass.isActive ? "active__menu" : ""
                   }
+                  onClick={closeMenu}
                 >
                   {item.display}
                 </NavLink>
               ))}
+
             </div>
           </div>
 
@@ -136,7 +140,7 @@ const Header = () => {
               <span className="user">
                 <i className="ri-user-line"></i>
                 <p onClick={handleUpdateProfile}>{username}</p>
-                <button onClick={handleSignout}>Sign out</button>
+                <p onClick={handleSignout}>Sign out</p>
               </span>
               :
               <span className="user">
@@ -149,6 +153,7 @@ const Header = () => {
             <span className="mobile__menu" onClick={toggleMenu}>
               <i className="ri-menu-line"></i>
             </span>
+
           </div>
         </div>
       </Container>

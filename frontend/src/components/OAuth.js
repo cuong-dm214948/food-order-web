@@ -1,46 +1,65 @@
-import { GoogleAuthProvider, signInWithPopup, getAuth } from 'firebase/auth';
-import { app } from '../firebase';
-import { useDispatch } from 'react-redux';
-import { signInSuccess } from '../store/user/userSlice';
-import { useNavigate } from 'react-router-dom';
-import React from "react";
+import React, { useState } from 'react';
+import { GoogleLogin, GoogleLogout } from 'react-google-login';
 
-export default function OAuth() {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const handleGoogleClick = async () => {
-    try {
-       const provider = new GoogleAuthProvider();
-       const auth = getAuth(app);
+function Login() {
+    const clientId = "354174433221-igoq9iflc7peqgkk168qc92gr1552ro4.apps.googleusercontent.com"
+    const [showloginButton, setShowloginButton] = useState(true);
+    const [showlogoutButton, setShowlogoutButton] = useState(false);
+    const onLoginSuccess = (res) => {
+        console.log('Login Success:', res.profileObj);
+        setShowloginButton(false);
+        setShowlogoutButton(true);
+    };
 
-       const result = await signInWithPopup(auth, provider);
-      const res = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          name: result.user.displayName,
-          email: result.user.email,
-          photo: result.user.photoURL,
-        }),
-      });
-      const data = await res.json();
-      console.log(data);
-      dispatch(signInSuccess(data));
-      navigate('/');
-    } catch (error) {
-      console.log('could not login with google', error);
-    }
-  };
-  return (
-    <button
-      type='button'
-      onClick={handleGoogleClick}
-      className='bg-blue-700 text-black rounded-lg p-3 uppercase hover:opacity-95 border-2 border-blue-700'
+    const onLoginFailure = (res) => {
+        console.log('Login Failed:', res);
+    };
 
-    >
-      Continue with google
-    </button>
-  );
+    const onSignoutSuccess = () => {
+        alert("You have been logged out successfully");
+        console.clear();
+        setShowloginButton(true);
+        setShowlogoutButton(false);
+    };
+
+    return (
+        <div className="login">
+           <center>
+               
+            <div className="loginDiv">
+            { showloginButton ?
+                <>
+                {/* <h2>Sign in With Google</h2>/ */}
+                <GoogleLogin
+                    clientId={clientId}                  
+                    onSuccess={onLoginSuccess}
+                    onFailure={onLoginFailure}
+                    cookiePolicy={'single_host_origin'}
+                    isSignedIn={true}
+                  
+                />
+                </>: null}
+            </div>
+           </center>
+
+            <div className="logoutDiv">
+            { showlogoutButton ?
+                <>
+
+                <GoogleLogout
+                    clientId={clientId}
+                    buttonText="Sign Out"
+                    onLogoutSuccess={onSignoutSuccess}
+                    className="logoutbtn"
+                >
+                    Sign out
+                </GoogleLogout><br/>
+                
+                </> : null
+            }
+            </div>
+            
+        </div>
+    );
 }
+export default Login;
