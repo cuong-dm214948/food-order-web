@@ -4,9 +4,15 @@
   border: 1px solid #fde4e4;
   border-radius: 5px;
   cursor: pointer;
+  margin:10px;
+}
+.sorting__widget{
+  width:55%;
+
 }
 .search__widget input {
   border: none;
+  width:95%;
 }
 
 .search__widget input:focus {

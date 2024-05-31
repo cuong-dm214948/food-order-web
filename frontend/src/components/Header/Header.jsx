@@ -43,6 +43,12 @@ const Header = () => {
     }
   }
 
+  const closeMenu = () => {
+    if (menuRef.current) {
+      menuRef.current.classList.remove("show__menu");
+    }
+  }
+
   const toggleCart = () => {
     dispatch(cartUiActions.toggle());
   };
@@ -70,7 +76,7 @@ const Header = () => {
       .then(res => {
         if (res.data.Status === "Success") {
           setAuth(true);
-          setUserName(res.data.username.username);
+          setUserName(res.data.username);
         } else {
           setAuth(false);
           setMessage(res.data.Error);
@@ -82,29 +88,31 @@ const Header = () => {
     axios.get('http://localhost:5001/logout')
       .then(res => {
         if (res.data.Status === 'Success') {
-          navigate('/login');
           setAuth(false);
-          //dispatch(signOut())
         }
       });
   };
 
   const handleUpdateProfile = () => {
-    navigate('/profile');
+    navigate('/Accountinfo');
+  };
+
+  const handleLogo = () => {
+    navigate('/');
   };
 
   return (
     <header className="header" ref={headerRef}>
       <Container>
         <div className="nav__wrapper d-flex align-items-center justify-content-between">
-          <div className="logo">
+          <div className="logo" onClick={handleLogo}>
             <img src={logo} alt="logo" />
             <h5>Tasty Treat</h5>
           </div>
 
           {/* ======= menu ======= */}
-          <div className="navigation" ref={menuRef} onClick={toggleMenu}>
-            <div className="menu d-flex align-items-center gap-5">
+          <div className="navigation" ref={menuRef}>
+            <div className="menu d-flex align-items-center gap-5" onClick={closeMenu} >
               {nav__links.map((item, index) => (
                 <NavLink
                   to={item.path}
@@ -112,10 +120,12 @@ const Header = () => {
                   className={(navClass) =>
                     navClass.isActive ? "active__menu" : ""
                   }
+                  onClick={closeMenu}
                 >
                   {item.display}
                 </NavLink>
               ))}
+
             </div>
           </div>
 
@@ -130,7 +140,7 @@ const Header = () => {
               <span className="user">
                 <i className="ri-user-line"></i>
                 <p onClick={handleUpdateProfile}>{username}</p>
-                <button onClick={handleSignout}>Sign out</button>
+                <p onClick={handleSignout}>Sign out</p>
               </span>
               :
               <span className="user">
@@ -143,6 +153,7 @@ const Header = () => {
             <span className="mobile__menu" onClick={toggleMenu}>
               <i className="ri-menu-line"></i>
             </span>
+
           </div>
         </div>
       </Container>

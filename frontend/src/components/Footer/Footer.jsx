@@ -27,7 +27,7 @@ const Footer = () => {
         <h5 className="footer__title mb-3">Address</h5>
         <ListGroup>
           <div className="delivery__time-item border-0 ps-0">
-            <p>110 Thai thinh</p>
+            <p>Số 1 Đại Cồ Việt</p>
           </div>
         </ListGroup>
       </div>

@@ -29,7 +29,7 @@ const Login = () => {
     // Fetch CSRF token when the component mounts
     const fetchCsrfToken = async () => {
       try {
-        const response = await axios.get('http://localhost:5001/csrf-token');
+        const response = await axios.get('http://localhost:5001/csrf-token', { withCredentials: true });
         setCsrfToken(response.data.csrfToken);
       } catch (err) {
         console.error('Error fetching CSRF token', err);
@@ -39,8 +39,6 @@ const Login = () => {
     fetchCsrfToken();
   }, []);
 
-  axios.defaults.withCredentials = true;
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!captchaToken) {
@@ -49,12 +47,17 @@ const Login = () => {
     }
 
     dispatch(signInStart());
+   
     try {
       const res = await axios.post('http://localhost:5001/login', {
         username: user,
         password: pwd,
         captchaToken: captchaToken,
-        csrfToken: csrfToken,
+      }, {
+        headers: {
+          'CSRF-Token': csrfToken
+        },
+        withCredentials: true,
       });
 
       if (res.data.Status === 'Success') {
@@ -62,10 +65,12 @@ const Login = () => {
         setLoginStatus('Login successful!');
         navigateTo('/');
       } else {
+        console.log("data",res.data)
         dispatch(signInFailure());
         setLoginStatus('Login failed!');
       }
     } catch (err) {
+      console.log(err)
       dispatch(signInFailure());
       setLoginStatus('Login failed!');
       console.error(err);
@@ -95,8 +100,8 @@ const Login = () => {
         <Container>
           <Row>
             <Col lg="6" md="6" sm="12" className="m-auto text-center">
-              <section>
-                <form className="form mb-5" onSubmit={handleSubmit}>
+              
+                <form className="form" onSubmit={handleSubmit}>
                   <span className={statusHolder}>{loginStatus}</span>
                   <div className="form__group">
                     <label htmlFor="username">Username:</label>
@@ -121,19 +126,18 @@ const Login = () => {
 
                   <div className="form__group">
                     <ReCAPTCHA
-                      sitekey="YOUR_RECAPTCHA_SITE_KEY"
+                      sitekey="6Le4pd8pAAAAAHcnu7JFxKnY3tbhm6r2jH_hcMms"
                       onChange={onCaptchaChange}
                     />
                   </div>
 
-                  <OAuth />
-                  <br />
                   <button type="submit" className="addTOCart__btn" disabled={loading}>
                     {loading ? 'Signing In...' : 'Sign In'}
                   </button>
                 </form>
-              </section>
+              
 
+              <OAuth />
               <Link to="/register">CAN'T SIGN IN? CREATE ACCOUNT</Link>
               <p className="text-red-700 mt-5">
                 {error ? error.message || 'Something went wrong!' : ''}

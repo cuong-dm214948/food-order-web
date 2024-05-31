@@ -1,27 +1,7 @@
 .header {
   width: 100%;
   height: 110px;
-  line-height: 100px;
-}
-
-@keyframes animation {
-  from {
-    top: -100px;
-  }
-  to {
-    top: 0px;
-  }
-}
-
-.header__shrink {
-  position: sticky;
-  top: 0;
-  left: 0;
-  background: #fff;
-  z-index: 99999;
-  box-shadow: 5px 5px 15px -5px #d7d6d6;
-  animation-name: animation;
-  animation-duration: 0.5s;
+  line-height: 110px;
 }
 
 .logo {
@@ -61,11 +41,13 @@
   color: #df2020 !important;
 }
 
-.cart__icon {
-  position: relative;
+.cart__icon i, .user i, .mobile__menu i{
+  font-size:  1.3rem;
+  color: #212245;
+  cursor: pointer;
 }
 
-.user {
+.cart__icon {
   position: relative;
 }
 
@@ -85,9 +67,40 @@
   justify-content: center;
 }
 
-.mobile__menu {
+.mobile__menu{
   font-weight: 600;
   display: none;
+}
+
+.header__shrink {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background: #fff;
+  z-index: 99999;
+  box-shadow: 5px 5px 15px -5px #d7d6d6;
+  animation-name: animation;
+  animation-duration: 0.5s;
+}
+
+.header__closeButton {
+  width: fit-content;
+  height: 60px;
+  padding: 10px 20px;
+  position: absolute;
+  top: 0.5rem;
+  right: 0rem;
+  margin: 0.5rem 0;
+  display: none;
+}
+
+.header__closeButton span i {
+  font-size: 1.1rem;
+  background: #212245;
+  padding: 5px;
+  border-radius: 50%;
+  color: #fff;
+  cursor: pointer;
 }
 
 @media only screen and (max-width: 992px) {
@@ -132,34 +145,16 @@
     display: block;
   }
 
+  .cart__icon i, .user i, .mobile__menu i{
+    font-size:  1rem;
+  }
+
   .show__menu {
     display: block;
   }
-}
 
-.header__closeButton {
-  width: fit-content;
-  height: 60px;
-  padding: 10px 20px;
-  position: absolute;
-  top: 0.5rem;
-  right: 0rem;
-  margin: 0.5rem 0;
-  display: none;
-}
-
-.header__closeButton span i {
-  font-size: 1.1rem;
-  background: #212245;
-  padding: 5px;
-  border-radius: 50%;
-  color: #fff;
-  cursor: pointer;
-}
-
-@media only screen and (max-width: 992px) {
-  .close__button {
-    display: flex;
+  .header__closeButton {
+    display: block;
   }
 }
 
@@ -184,20 +179,11 @@
   }
 }
 
-.close__button {
-  width: fit-content;
-  height: 60px;
-  padding: 10px 20px;
-  position: absolute;
-  top: 0.5rem;
-  right: 0rem;
-}
-
-.close__button span i {
-  font-size: 1.1rem;
-  background: #212245;
-  padding: 5px;
-  border-radius: 50%;
-  color: #fff;
-  cursor: pointer;
+@keyframes animation {
+  from {
+    top: -100px;
+  }
+  to {
+    top: 0px;
+  }
 }

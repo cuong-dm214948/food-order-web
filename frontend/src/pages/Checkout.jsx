@@ -9,6 +9,8 @@ import CommonSection from '../components/UI/common-section/CommonSection';
 import "../styles/checkout.css";
 import { AiFillCheckCircle } from "react-icons/ai";
 
+const RECAPTCHA_SITEKEY = process.env.REACT_APP_CLIENT_SITE_KEY;
+
 const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
@@ -16,6 +18,7 @@ const Checkout = () => {
   const [captchaToken, setCaptchaToken] = useState('');
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [loadingCash, setLoadingCash] = useState(false);
   const [orderSuccess, setOrderSuccess] = useState(false);
   const navigate = useNavigate();
 
@@ -28,6 +31,7 @@ const Checkout = () => {
         console.error('Error fetching CSRF token:', error);
       });
   }, []);
+
 
   const handleCheckout = (e) => {
     e.preventDefault();
@@ -45,6 +49,7 @@ const Checkout = () => {
       .then(response => {
         if (response.data.status === 'Success') {
           setOrderSuccess(true);
+
         } else {
           setError(true);
         }
@@ -58,13 +63,25 @@ const Checkout = () => {
       });
   };
 
+  const handleCash = () => {
+    setLoadingCash(true);
+    
+    setTimeout(() => {
+      setLoadingCash(false);
+      setOrderSuccess(true);
+    }, 1000); // 1 second delay
+  }
+
   if (orderSuccess) {
     return (
       <div className="checkoutMessage">
         <div className="checkoutTitleContainer">
           <AiFillCheckCircle className="checkoutIcon" />
           <h3>Thank you for your order!</h3>
+          
+          
         </div>
+        <h4>We are already sent order payment to your email. PLease verify!</h4>
         <span>
           Your order is being processed and will be served as fast as possible.
         </span>
@@ -79,7 +96,7 @@ const Checkout = () => {
         <Container>
           <Row>
             <Col lg="12">
-              <h5 className="mb-5">Summary of your order</h5>
+              <h5 className="mb-5">Confirmation of your order</h5>
               <table className="table table-borderless mb-5 align-middle">
                 <tbody>
                   {cartItems.map((item) => (
@@ -90,18 +107,23 @@ const Checkout = () => {
               <div className="mt-4">
                 <h6>
                   Total: 
-                  <span className="cart__subtotal">{totalAmount}</span>$
+                  <span className="cart__subtotal">{totalAmount}</span>K
                 </h6>
                 <p>Taxes already included</p>
-                <form onSubmit={handleCheckout}>
+               
                   <ReCAPTCHA
-                    sitekey="YOUR_RECAPTCHA_SITE_KEY"
-                    onChange={token => setCaptchaToken(token)}
+                    sitekey = {RECAPTCHA_SITEKEY}
+                    onChange = {token => setCaptchaToken(token)}
                   />
-                  <button className="addTOCart__btn mt-4" type="submit" disabled={loading}>
-                    {loading ? 'Processing...' : 'Proceed to Checkout'}
+              
+                  <button className="addTOCart__btn mt-4" onClick={handleCash} disabled={loadingCash}>
+                    {loadingCash ? 'Processing...' : 'Thanh toán khi nhận hàng'}
                   </button>
-                </form>
+                  
+                  <button className="addTOCart__btn mt-4" onClick={handleCheckout} disabled={loading}>
+                    {loading ? 'Processing...' : 'VNPay'}
+                  </button>
+                  
                 {error && <p className='text-red-700 mt-5'>Something went wrong!</p>}
               </div>
             </Col>
@@ -120,7 +142,7 @@ const Tr = ({ item }) => {
         <img src={image01} alt="" />
       </td>
       <td className="text-center">{title}</td>
-      <td className="text-center">${price}</td>
+      <td className="text-center">{price}K</td>
       <td className="text-center">{quantity}px</td>
     </tr>
   );

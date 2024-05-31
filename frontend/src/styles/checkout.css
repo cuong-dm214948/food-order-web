@@ -15,6 +15,10 @@
   margin-bottom: 0.7rem;
 }
 
+.addTOCart__btn{
+  margin-right: 50px;
+}
+
 @media only screen and (max-width: 480px) {
   .checkoutMessage {
     margin: 1rem 1rem;

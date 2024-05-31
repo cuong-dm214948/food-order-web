@@ -37,7 +37,7 @@ const Carts = () => {
 
         <div className="cart__bottom d-flex align-items-center justify-content-between">
           <h6>
-            Total : <span>{totalAmount}</span>$
+            Total : <span>{totalAmount}</span>K
           </h6>
           <button>
             <Link to="/checkout" onClick={toggleCart}>
