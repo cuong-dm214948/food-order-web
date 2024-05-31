@@ -1,141 +1,108 @@
-import { Container, Row, Col } from "reactstrap";
-import "../styles/register.css";
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react'
+// import avatar from '../assets/profile.png';
+// import toast, { Toaster } from 'react-hot-toast';
+import { useFormik } from 'formik';
+// import { profileValidation } from '../helper/validate';
+// import convertToBase64 from '../helper/convert';
+// import useFetch from '../hooks/fetch.hook';
 
-const Profile = () =>{
-  const [fullName, setFullName] = useState('');
-  const [mobileNo, setMobileNo] = useState('');
-  const [email, setEmail] = useState('');
-  const [address, setAddress] = useState('');
-  const [csrfToken, setCsrfToken] = useState('');
-  const [errors, setErrors] = useState({});
-  const [successMessage, setSuccessMessage] = useState('');
+import { useNavigate } from 'react-router-dom'
 
-  useEffect(() => {
-    const fetchCsrfToken = async () => {
-      try {
-        const response = await fetch('https://localhost:5001/csrf-token', {
-          credentials: 'include',
-        });
-        const data = await response.json();
-        setCsrfToken(data.csrfToken);
-      } catch (error) {
-        console.error('Error fetching CSRF token:', error);
-      }
-    };
+import styles from '../styles/profile.css';
 
-    fetchCsrfToken();
-  }, []);
+export default function Profile() {
 
-  const validateInputs = () => {
-    const errors = {};
+//   const [file, setFile] = useState();
+//   const [{ isLoading, apiData, serverError }] = useFetch();
+  const navigate = useNavigate()
+ 
+//   const formik = useFormik({
+//     initialValues : {
+//       firstName : apiData?.firstName || '',
+//       lastName: apiData?.lastName || '',
+//       email: apiData?.email || '',
+//       mobile: apiData?.mobile || '',
+//       address : apiData?.address || ''
+//     },
+//     enableReinitialize: true,
+//     validate : profileValidation,
+//     validateOnBlur: false,
+//     validateOnChange: false,
+//     onSubmit : async values => {
+//       values = await Object.assign(values, { profile : file || apiData?.profile || ''})
+//       let updatePromise = updateUser(values);
 
-    if (!/^[A-Za-z\s]+$/.test(fullName)) {
-      errors.fullName = 'Full name should contain only alphabets and spaces.';
-    }
+//       toast.promise(updatePromise, {
+//         loading: 'Updating...',
+//         success : <b>Update Successfully...!</b>,
+//         error: <b>Could not Update!</b>
+//       });
 
-    if (!/^\d{10}$/.test(mobileNo)) {
-      errors.mobileNo = 'Mobile number should contain exactly 10 digits.';
-    }
+//     }
+//   })
 
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Email is invalid.';
-    }
+//   /** formik doensn't support file upload so we need to create this handler */
+//   const onUpload = async e => {
+//     const base64 = await convertToBase64(e.target.files[0]);
+//     setFile(base64);
+//   }
 
-    if (!/\d/.test(address) || !/[A-Za-z]/.test(address)) {
-      errors.address = 'Address should contain both numbers and text.';
-    }
+//   // logout handler function
+//   function userLogout(){
+//     localStorage.removeItem('token');
+//     navigate('/')
+//   }
 
-    return errors;
-  };
+//   if(isLoading) return <h1 className='text-2xl font-bold'>isLoading</h1>;
+//   if(serverError) return <h1 className='text-xl text-red-500'>{serverError.message}</h1>
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const validationErrors = validateInputs();
-    if (Object.keys(validationErrors).length > 0) {
-      setErrors(validationErrors);
-    } else {
-      setErrors({});
-      try {
-        const response = await fetch('https://localhost:5001/profile', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'CSRF-Token': csrfToken,  // Include CSRF token in headers
-          },
-          credentials: 'include',
-          body: JSON.stringify({ fullName, mobileNo, email, address }),
-        });
+  return (
+//     <div className="container mx-auto">
 
-        if (response.ok) {
-          const data = await response.json();
-          setSuccessMessage('Profile updated successfully!');
-          console.log(data);
-        } else {
-          const errorData = await response.json();
-          setErrors({ submit: errorData.message || 'An error occurred' });
-        }
-      } catch (error) {
-        setErrors({ submit: 'An error occurred' });
-      }
-    }
-  };
+//       <Toaster position='top-center' reverseOrder={false}></Toaster>
 
-  return(
-    <div className='w-full max-w-md mx-auto py-3 py-md-4 flex flex-col justify-center items-center h-screen'>
+//       <div className='flex justify-center items-center h-screen'>
+//         <div  style={{ width: "45%", paddingTop: '3em'}}>
 
-    <div className="title flex flex-col items-center text-center mb-3">
-      <h4 className='text-5xl font-bold'>Profile</h4>
-    </div>
-    <Row>
-                <Col lg="6" md="6" sm="12" className="m-auto text-center">
-                  <form className="form__group mb-5" >
-<div className="form__group">
-              <input
-                type="text"
-                placeholder="Full name"
-                className="items-center border-2 p-2 rounded-md w-full"
-                value={fullName}
-                onChange={(e) => setFullName(e.target.value)}
-              />
-              {errors.fullName && <p className="text-red-500">{errors.fullName}</p>}
-              <input
-                type="text"
-                placeholder="Mobile No."
-                className="border-2 p-2 rounded-md w-full"
-                value={mobileNo}
-                onChange={(e) => setMobileNo(e.target.value)}
-              />
-              {errors.mobileNo && <p className="text-red-500">{errors.mobileNo}</p>}
-              <input
-                type="text"
-                placeholder="Email*"
-                className="border-2 p-2 rounded-md w-full"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-              />
-              {errors.email && <p className="text-red-500">{errors.email}</p>}
-              <input
-                type="text"
-                placeholder="Address"
-                className="border-2 p-2 rounded-md w-full"
-                value={address}
-                onChange={(e) => setAddress(e.target.value)}
-              />
-              {errors.address && <p className="text-red-500">{errors.address}</p>}
-              <button className="addTOCart__btn w-full py-2 mt-3" type="submit">
-                Update
-              </button>
-              {errors.submit && <p className="text-red-500">{errors.submit}</p>}
-              {successMessage && <p className="text-green-500">{successMessage}</p>}
-            </div>
+          <div className="title flex flex-col items-center">
+            <h4 className='text-5xl font-bold'>Profile</h4>
+          </div>
 
-    </form>
+//           <form className='py-1' onSubmit={formik.handleSubmit}>
+//               <div className='profile flex justify-center py-4'>
+//                   <label htmlFor="profile">
+//                     <img src={apiData?.profile || file || avatar} alt="avatar" />
+//                   </label>
+                  
+//                   <input onChange={onUpload} type="file" id='profile' name='profile' />
+//               </div>
 
-    </Col>
-    </Row>
-    </div>
- )
+//               <div className="textbox flex flex-col items-center gap-6">
+//                 <div className="name flex w-3/4 gap-10">
+//                   <input {...formik.getFieldProps('firstName')} type="text" placeholder='FirstName' />
+//                   <input {...formik.getFieldProps('lastName')} type="text" placeholder='LastName' />
+//                 </div>
+
+//                 <div className="name flex w-3/4 gap-10">
+//                   <input {...formik.getFieldProps('mobile')} type="text" placeholder='Mobile No.' />
+//                   <input {...formik.getFieldProps('email')} type="text" placeholder='Email*' />
+//                 </div>
+
+               
+//                   <input {...formik.getFieldProps('address')} type="text" placeholder='Address' />
+//                   <button className={styles.btn} type='submit'>Update</button>
+               
+                  
+//               </div>
+
+//               <div className="text-center py-4">
+//                 <span className='text-gray-500'>come back later? <button onClick={userLogout} className='text-red-500' to="/">Logout</button></span>
+//               </div>
+
+//           </form>
+
+//         </div>
+//       </div>
+//     </div>
+  )
 }
-
-export default Profile;
