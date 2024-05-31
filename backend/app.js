@@ -37,11 +37,13 @@ const db = mysql.createConnection({
 const authMiddleware = (req, res, next) => {
   const token = req.cookies['access-token'];
   if (!token) {
+    logger.warn('No token provided', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.status(401).json({ Error: "No token provided" });
   }
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
     if (err) {
+      logger.warn('Invalid token', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.status(401).json({ Error: "Invalid token" });
     } else {
       req.username = decoded.username;
@@ -60,13 +62,16 @@ const logger = winston.createLogger({
 });
 
 app.get('/', authMiddleware, (req, res) => {
+  logger.info('Accessed root route', { username: req.username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
   return res.json({ Status: "Success", username: req.username, userType: req.userType });
 });
 
 db.connect((error) => {
   if (error) {
+    logger.error('MySQL connection error', { error, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     console.log(error);
   } else {
+    logger.info('MySQL connected', { timestamp: new Date().toISOString() });
     console.log("MySQL connected...");
   }
 });
@@ -76,7 +81,7 @@ const saltRounds = 10;
 const validateCaptcha = async (captchaToken) => {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
   if (!secretKey) {
-    console.error('reCAPTCHA secret key is not set.');
+    logger.error('reCAPTCHA secret key is not set.', { timestamp: new Date().toISOString() });
     return false;
   }
 
@@ -87,7 +92,7 @@ const validateCaptcha = async (captchaToken) => {
     const recaptchaJson = await recaptchaRes.json();
     return recaptchaJson.success;
   } catch (err) {
-    console.error('Error validating CAPTCHA', err);
+    logger.error('Error validating CAPTCHA', { error: err, timestamp: new Date().toISOString() });
     return false;
   }
 };
@@ -102,102 +107,117 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@$&*()]).{8,24}$/;
 app.post('/register', async (req, res) => {
   const captchaValid = await validateCaptcha(req.body.captchaToken);
   if (!captchaValid) {
+    logger.warn('Invalid CAPTCHA during registration', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  if (USER_REGEX.test(req.body.username)) {
+  if (!USER_REGEX.test(req.body.username)) {
+    logger.warn('Invalid username format during registration', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.status(400).json({ Error: 'Username should contain only alphabets and number.' });
   }
 
-  if (PWD_REGEX.test(req.body.password)) {
-    return res.status(400).json({ Error: 'only alphabets, special character, numbers.' });
+  if (!PWD_REGEX.test(req.body.password)) {
+    logger.warn('Invalid password format during registration', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+    return res.status(400).json({ Error: 'Password should contain alphabets, special characters, and numbers.' });
   }
 
   const sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
 
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {
-      logger.error('Error generating salt:', err);
+      logger.error('Error generating salt', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.status(500).send("Internal server error");
     }
     bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
       if (err) {
+        logger.error('Error hashing password', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
         return res.status(500).send("Internal server error");
       }
       const values = [req.body.username, hash, 'user'];
       db.query(sql, values, (err, result) => {
         if (err) {
+          logger.error('Database error during registration', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
           return res.status(500).send("Internal server error");
         }
-        logger.info(`User ${username} has registered in successfully.`);
+        logger.info(`User ${req.body.username} registered successfully`, { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
         res.send({ Status: "Success" });
       });
     });
   });
 });
 
+
 let refreshTokens = [];
 
 app.post('/login', csrfProtection, async (req, res) => {
   const captchaValid = await validateCaptcha(req.body.captchaToken);
   if (!captchaValid) {
+    logger.warn('Invalid CAPTCHA during login', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  if (USER_REGEX.test(req.body.username)) {
+  if (!USER_REGEX.test(req.body.username)) {
+    logger.warn('Invalid username format during login', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.status(400).json({ Error: 'Username should contain only alphabets and number.' });
   }
 
-  if (PWD_REGEX.test(req.body.password)) {
-    return res.status(400).json({ Error: 'only alphabets, special character, numbers.' });
+  if (!PWD_REGEX.test(req.body.password)) {
+    logger.warn('Invalid password format during login', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+    return res.status(400).json({ Error: 'Password should contain alphabets, special characters, and numbers.' });
   }
 
   const sql = "SELECT * FROM users WHERE username = ?";
   db.query(sql, [req.body.username], (err, results) => {
     if (err) {
-      logger.error('Error comparing username:', err);
+      logger.error('Database error during login', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.json({ Error: err });
     }
     if (results.length > 0) {
-      console.log(req.body.password.toString(), results[0].password)
       bcrypt.compare(req.body.password.toString(), results[0].password, (err, response) => {
-        console.log(response)
-        if (err) { 
-          logger.error('Error comparing passwords:', err);
-          return res.json({ Error: "Invalid1 username or password" });}
+        if (err) {
+          logger.warn('Invalid username or password during login', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+          return res.json({ Error: "Invalid username or password" });
+        }
         if (response) {
           const username = results[0].username;
           const role = results[0].role;
-          logger.info(`User ${username} has logged in successfully.`);
           const token = jwt.sign({ username, role }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
           const refreshToken = jwt.sign({ username, role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '25200s' });
           refreshTokens.push(refreshToken);
           res.cookie('access-token', token, { httpOnly: true, secure: true, sameSite:'none' });
+          logger.info(`User ${username} logged in successfully`, { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
           return res.json({ Status: "Success", token, refreshToken });
         } else {
-          console.log("rres",response)
-          return res.json({ Error: "Invalid2 username or password" });
+          logger.warn('Invalid username or password during login', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+          return res.json({ Error: "Invalid username or password" });
         }
       });
     } else {
+      logger.warn('Login failed: invalid username or password', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.json({ Error: "Login failed. Invalid username or password" });
     }
   });
 });
 
+
 app.post('/token', csrfProtection, (req, res) => {
   const { token } = req.body;
   if (!token) {
+    logger.warn('No token provided for refresh', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.sendStatus(401);
   }
   if (!refreshTokens.includes(token)) {
+    logger.warn('Invalid refresh token', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.sendStatus(403);
   }
   jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) {
+      logger.error('Error verifying refresh token', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.sendStatus(403);
     }
-    const accessToken = generateAccessToken(user.username, user.userType);
+    const accessToken = jwt.sign({ username: user.username, role: user.role }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+    res.cookie('access-token', accessToken, { httpOnly: true, secure: true, sameSite:'none' });
+    logger.info('Access token refreshed successfully', { username: user.username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     res.json({ accessToken });
   });
 });
