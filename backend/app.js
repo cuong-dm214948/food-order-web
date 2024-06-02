@@ -184,7 +184,7 @@ app.post('/login', csrfProtection, async (req, res) => {
           const token = jwt.sign({ username, role }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
           const refreshToken = jwt.sign({ username, role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '25200s' });
           refreshTokens.push(refreshToken);
-          res.cookie('access-token', token, { httpOnly: true, secure: true, sameSite:'none' });
+          res.cookie('access-token', token, { httpOnly: true, secure: true, sameSite:'Strict' });
           logger.info(`User ${username} logged in successfully`, { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
           return res.json({ Status: "Success", token, refreshToken });
         } else {
