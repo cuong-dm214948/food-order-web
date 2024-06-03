@@ -9,6 +9,8 @@ const csurf = require('csurf');
 const fetch = require('node-fetch');
 const  nodemailer = require('nodemailer');
 const winston = require('winston');
+const multer = require('multer');
+
 dotenv.config({ path: './.env' });
 
 const app = express();
@@ -216,7 +218,7 @@ app.post('/token', csrfProtection, (req, res) => {
       return res.sendStatus(403);
     }
     const accessToken = jwt.sign({ username: user.username, role: user.role }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
-    res.cookie('access-token', accessToken, { httpOnly: true, secure: true, sameSite:'none' });
+    res.cookie('access-token', accessToken, { httpOnly: true, secure: true, sameSite:'strict' });
     logger.info('Access token refreshed successfully', { username: user.username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     res.json({ accessToken });
   });
@@ -308,9 +310,35 @@ app.get('/logout', authMiddleware, (req, res) => {
   return res.json({ Status: "Success" });
 });
 
-app.post('/profile', csrfProtection, authMiddleware, (req, res) => {
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // specify the destination directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`); // specify the filename
+  },
+});
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images Only!');
+    }
+  }
+});
+
+
+app.post('/profile', csrfProtection, authMiddleware, upload.single('profileImage'), (req, res) => {
   const { fullName, mobileNo, email, address } = req.body;
   const username = req.username;
+  const profileImage = req.file ? req.file.filename : null; // Get the uploaded file name
 
   if (!/^[A-Za-z\s]+$/.test(fullName)) {
     return res.status(400).json({ Error: 'Full name should contain only alphabets and spaces.' });
@@ -325,8 +353,14 @@ app.post('/profile', csrfProtection, authMiddleware, (req, res) => {
     return res.status(400).json({ Error: 'Address should contain both numbers and text.' });
   }
 
-  const sql = "UPDATE users SET fullName = ?, mobileNo = ?, email = ?, address = ? WHERE username = ?";
-  db.query(sql, [fullName, mobileNo, email, address, username], (err, result) => {
+  const sql = profileImage 
+    ? "UPDATE users SET fullName = ?, mobileNo = ?, email = ?, address = ?, profileImage = ? WHERE username = ?"
+    : "UPDATE users SET fullName = ?, mobileNo = ?, email = ?, address = ? WHERE username = ?";
+  const values = profileImage 
+    ? [fullName, mobileNo, email, address, profileImage, username]
+    : [fullName, mobileNo, email, address, username];
+
+  db.query(sql, values, (err, result) => {
     if (err) {
       return res.status(500).json({ Error: 'Internal server error' });
     }
@@ -335,6 +369,28 @@ app.post('/profile', csrfProtection, authMiddleware, (req, res) => {
   });
 });
 
+app.get('/profile', csrfProtection, authMiddleware, (req, res) => {
+  const username = req.username;
+
+  const sql = "SELECT fullName, mobileNo, email, address, profileImage FROM users WHERE username = ?";
+  db.query(sql, [username], (err, result) => {
+    if (err) {
+      return res.status(500).json({ Error: 'Internal server error' });
+    }
+    if (result.length > 0) {
+      const user = result[0];
+      return res.json({
+        fullName: user.fullName,
+        mobileNo: user.mobileNo,
+        email: user.email,
+        address: user.address,
+        profileImageUrl: user.profileImage 
+      });
+    } else {
+      return res.status(404).json({ Error: 'User not found' });
+    }
+  });
+});
 
 app.listen(5001, () => {
   console.log("Server is running on port 5001");
