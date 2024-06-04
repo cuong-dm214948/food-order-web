@@ -8,6 +8,7 @@ const cookieParser = require('cookie-parser');
 const csurf = require('csurf');
 const fetch = require('node-fetch');
 const  nodemailer = require('nodemailer');
+const winston = require('winston');
 dotenv.config({ path: './.env' });
 const session = require('express-session');
 const passport = require('passport');
@@ -80,11 +81,13 @@ const authMiddleware = (req, res, next) => {
   const token = req.cookies['access-token'];
   console.log(token)
   if (!token) {
+    logger.warn('No token provided', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.status(401).json({ Error: "No token provided" });
   }
 
   jwt.verify(token, process.env.TOKEN_SECRET, (err, decoded) => {
     if (err) {
+      logger.warn('Invalid token', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.status(401).json({ Error: "Invalid token" });
     } else {
       req.username = decoded.username;
@@ -94,14 +97,24 @@ const authMiddleware = (req, res, next) => {
   });
 };
 
-app.get('/login', authMiddleware, (req, res) => {
+const logger = winston.createLogger({
+  level: 'info',
+  format: winston.format.json(),
+  transports: [
+    new winston.transports.File({ filename: 'logs.log' }),
+  ],
+});
+
+app.get('/', authMiddleware, (req, res) => {
   return res.json({ Status: "Success", username: req.username, userType: req.userType });
 });
 
 db.connect((error) => {
   if (error) {
+    logger.error('MySQL connection error', { error, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     console.log(error);
   } else {
+    logger.info('MySQL connected', { timestamp: new Date().toISOString() });
     console.log("MySQL connected...");
   }
 });
@@ -111,7 +124,7 @@ const saltRounds = 10;
 const validateCaptcha = async (captchaToken) => {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
   if (!secretKey) {
-    console.error('reCAPTCHA secret key is not set.');
+    logger.error('reCAPTCHA secret key is not set.', { timestamp: new Date().toISOString() });
     return false;
   }
 
@@ -122,7 +135,7 @@ const validateCaptcha = async (captchaToken) => {
     const recaptchaJson = await recaptchaRes.json();
     return recaptchaJson.success;
   } catch (err) {
-    console.error('Error validating CAPTCHA', err);
+    logger.error('Error validating CAPTCHA', { error: err, timestamp: new Date().toISOString() });
     return false;
   }
 };
@@ -137,36 +150,43 @@ const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@$&*()]).{8,24}$/;
 app.post('/register', csrfProtection, async (req, res) => {
   const captchaValid = await validateCaptcha(req.body.captchaToken);
   if (!captchaValid) {
+    logger.warn('Invalid CAPTCHA during registration', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  const v1 = USER_REGEX.test(req.body.username);
-  const v2 = PWD_REGEX.test(req.body.password);
-  if (!v1 || !v2) {
-    return res.status(400).send({ Error: 'Invalid us or pw' });
+  if (USER_REGEX.test(req.body.username)) {
+    return res.status(400).json({ Error: 'Username should contain only alphabets and number.' });
+  }
+
+  if (PWD_REGEX.test(req.body.password)) {
+    return res.status(400).json({ Error: 'only alphabets, special character, numbers.' });
   }
 
   const sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
 
   bcrypt.genSalt(saltRounds, (err, salt) => {
     if (err) {
-      logger.error('Error generating salt:', err);
+      logger.error('Error generating salt', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.status(500).send("Internal server error");
     }
     bcrypt.hash(req.body.password.toString(), salt, (err, hash) => {
       if (err) {
+        logger.error('Error hashing password', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
         return res.status(500).send("Internal server error");
       }
       const values = [req.body.username, hash, 'user'];
       db.query(sql, values, (err, result) => {
         if (err) {
+          logger.error('Database error during registration', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
           return res.status(500).send("Internal server error");
         }
+        logger.info(`User ${username} has registered in successfully.`);
         res.send({ Status: "Success" });
       });
     });
   });
 });
+
 
 let refreshTokens = [];
 
@@ -175,59 +195,70 @@ app.post('/login', csrfProtection, async (req, res) => {
  
   const captchaValid = await validateCaptcha(req.body.captchaToken);
   if (!captchaValid) {
+    logger.warn('Invalid CAPTCHA during login', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  const v1 = USER_REGEX.test(req.body.username);
-  const v2 = PWD_REGEX.test(req.body.password);
-  if (!v1 || !v2) {
-    return res.status(400).send({ Error: 'Invalid us or pw' });
+  if (USER_REGEX.test(req.body.username)) {
+    return res.status(400).json({ Error: 'Username should contain only alphabets and number.' });
+  }
+
+  if (PWD_REGEX.test(req.body.password)) {
+    return res.status(400).json({ Error: 'only alphabets, special character, numbers.' });
   }
   
   const sql = "SELECT * FROM users WHERE username = ?";
   db.query(sql, [req.body.username], (err, results) => {
     if (err) {
+      logger.error('Error comparing username:', err);
       return res.json({ Error: err });
     }
     if (results.length > 0) {
       bcrypt.compare(req.body.password.toString(), results[0].password, (err, response) => {
-      
+        console.log(response)
         if (err) { 
-       
+          logger.error('Error comparing passwords:', err);
           return res.json({ Error: "Invalid1 username or password" });}
         if (response) {
           const username = results[0].username;
           const role = results[0].role;
-   
-          const token = jwt.sign({ username, role }, process.env.TOKEN_SECRET, { expiresIn: '7200s' });
+          logger.info(`User ${username} has logged in successfully.`);
+          const token = jwt.sign({ username, role }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
           const refreshToken = jwt.sign({ username, role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '25200s' });
           refreshTokens.push(refreshToken);
-          res.cookie('access-token', token, );
+          res.cookie('access-token', token, { httpOnly: true, secure: true, sameSite:'none' });
           return res.json({ Status: "Success", token, refreshToken });
         } else {
-
+          console.log("rres",response)
           return res.json({ Error: "Invalid2 username or password" });
         }
       });
     } else {
+      logger.warn('Login failed: invalid username or password', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.json({ Error: "Login failed. Invalid username or password" });
     }
   });
 });
 
+
 app.post('/token', csrfProtection, (req, res) => {
   const { token } = req.body;
   if (!token) {
+    logger.warn('No token provided for refresh', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.sendStatus(401);
   }
   if (!refreshTokens.includes(token)) {
+    logger.warn('Invalid refresh token', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     return res.sendStatus(403);
   }
   jwt.verify(token, process.env.REFRESH_TOKEN_SECRET, (err, user) => {
     if (err) {
+      logger.error('Error verifying refresh token', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.sendStatus(403);
     }
-    const accessToken = generateAccessToken(user.username, user.userType);
+    const accessToken = jwt.sign({ username: user.username, role: user.role }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+    res.cookie('access-token', accessToken, { httpOnly: true, secure: true, sameSite:'strict' });
+    logger.info('Access token refreshed successfully', { username: user.username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
     res.json({ accessToken });
   });
 });
@@ -331,9 +362,35 @@ app.get("/logout", (req, res) => {
 
 
 
-app.post('/profile', csrfProtection, authMiddleware, (req, res) => {
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // specify the destination directory
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`); // specify the filename
+  },
+});
+
+const upload = multer({ 
+  storage: storage,
+  fileFilter: (req, file, cb) => {
+    const filetypes = /jpeg|jpg|png/;
+    const mimetype = filetypes.test(file.mimetype);
+    const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+
+    if (mimetype && extname) {
+      return cb(null, true);
+    } else {
+      cb('Error: Images Only!');
+    }
+  }
+});
+
+
+app.post('/profile', csrfProtection, authMiddleware, upload.single('profileImage'), (req, res) => {
   const { fullName, mobileNo, email, address } = req.body;
   const username = req.username;
+  const profileImage = req.file ? req.file.filename : null; // Get the uploaded file name
 
   if (!/^[A-Za-z\s]+$/.test(fullName)) {
     return res.status(400).json({ Error: 'Full name should contain only alphabets and spaces.' });
@@ -349,15 +406,99 @@ app.post('/profile', csrfProtection, authMiddleware, (req, res) => {
   }
   console.log("sdhbuwef")
 
-  const sql = "UPDATE users SET fullName = ?, mobileNo = ?, email = ?, address = ? WHERE username = ?";
-  db.query(sql, [fullName, mobileNo, email, address, username], (err, result) => {
+  const sql = profileImage 
+    ? "UPDATE users SET fullName = ?, mobileNo = ?, email = ?, address = ?, profileImage = ? WHERE username = ?"
+    : "UPDATE users SET fullName = ?, mobileNo = ?, email = ?, address = ? WHERE username = ?";
+  const values = profileImage 
+    ? [fullName, mobileNo, email, address, profileImage, username]
+    : [fullName, mobileNo, email, address, username];
+
+  db.query(sql, values, (err, result) => {
     if (err) {
       return res.status(500).json({ Error: 'Internal server error' });
     }
-
+    logger.info(`User ${username} has updated profile successfully.`);
     return res.json({ Status: 'Profile updated successfully' });
   });
 });
+
+app.get('/profile', csrfProtection, authMiddleware, (req, res) => {
+  const username = req.username;
+
+  const sql = "SELECT fullName, mobileNo, email, address, profileImage FROM users WHERE username = ?";
+  db.query(sql, [username], (err, result) => {
+    if (err) {
+      return res.status(500).json({ Error: 'Internal server error' });
+    }
+    if (result.length > 0) {
+      const user = result[0];
+      logger.info('Get user data successfully', { username: user.username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+      return res.json({
+        fullName: user.fullName,
+        mobileNo: user.mobileNo,
+        email: user.email,
+        address: user.address,
+        profileImageUrl: user.profileImage 
+        
+      });
+    } else {
+      return res.status(404).json({ Error: 'User not found' });
+    }
+  });
+});
+
+
+app.post('/change_password', csrfProtection, authMiddleware, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const username = req.username;
+
+  if (!PWD_REGEX.test(newPassword)) {
+    logger.warn('Invalid password format during password change', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+    return res.status(400).json({ Error: 'Password should contain alphabets, special characters, and numbers.' });
+  }
+
+  const sqlSelect = "SELECT password FROM users WHERE username = ?";
+  db.query(sqlSelect, [username], (err, results) => {
+    if (err) {
+      logger.error('Database error during password change', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+      return res.status(500).json({ Error: 'Internal server error' });
+    }
+    if (results.length > 0) {
+      bcrypt.compare(currentPassword, results[0].password, (err, response) => {
+        if (err || !response) {
+          logger.warn('Invalid current password during password change', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+          return res.status(400).json({ Error: 'Invalid current password' });
+        }
+        bcrypt.genSalt(saltRounds, (err, salt) => {
+          if (err) {
+            logger.error('Error generating salt during password change', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+            return res.status(500).json({ Error: 'Internal server error' });
+          }
+          bcrypt.hash(newPassword, salt, (err, hash) => {
+            if (err) {
+              logger.error('Error hashing new password during password change', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+              return res.status(500).json({ Error: 'Internal server error' });
+            }
+            const sqlUpdate = "UPDATE users SET password = ? WHERE username = ?";
+            db.query(sqlUpdate, [hash, username], (err, result) => {
+              if (err) {
+                logger.error('Database error during password update', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+                return res.status(500).json({ Error: 'Internal server error' });
+              }
+              logger.info('Password updated successfully', { username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+              return res.json({ Status: 'Password updated successfully' });
+            });
+          });
+        });
+      });
+    } else {
+      logger.warn('User not found during password change', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+      return res.status(404).json({ Error: 'User not found' });
+    }
+  });
+});
+
+
 
 
 app.listen(5001, () => {

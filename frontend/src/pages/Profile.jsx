@@ -3,11 +3,13 @@ import "../styles/register.css";
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
 
-const Profile = () =>{
+const Profile = () => {
   const [fullName, setFullName] = useState('');
   const [mobileNo, setMobileNo] = useState('');
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
+  const [profileImage, setProfileImage] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState(''); // To display existing profile image
   const [csrfToken, setCsrfToken] = useState('');
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
@@ -24,6 +26,28 @@ const Profile = () =>{
     };
 
     fetchCsrfToken();
+
+    const fetchUserProfile = async () => {
+      try {
+        const response = await fetch('https://localhost:5001/profile', {
+          credentials: 'include',
+        });
+        if (response.ok) {
+          const data = await response.json();
+          setFullName(data.fullName);
+          setMobileNo(data.mobileNo);
+          setEmail(data.email);
+          setAddress(data.address);
+          setProfileImageUrl(data.profileImageUrl); 
+        } else {
+          console.error('Failed to fetch user profile');
+        }
+      } catch (error) {
+        console.error('Error fetching user profile:', error);
+      }
+    };
+
+    fetchUserProfile();
   }, []);
   
   const validateInputs = () => {
@@ -56,13 +80,15 @@ const Profile = () =>{
     } else {
       setErrors({});
       try {
-        const response = await axios.post('http://localhost:5001/profile', { fullName, mobileNo, email, address }, {
-        headers: {
-          'CSRF-Token': csrfToken
-        },
-        withCredentials: true,
-      });
-      console.log(response)
+        const response = await fetch('https://localhost:5001/profile', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': csrfToken,  // Include CSRF token in headers
+          },
+          credentials: 'include',
+          body: JSON.stringify({ fullName, mobileNo, email, address }),
+        });
 
         if (response.ok) {
           const data = await response.json();
@@ -79,7 +105,7 @@ const Profile = () =>{
   };
 
 
-  return(
+  return (
     <div className='w-full max-w-md mx-auto py-3 py-md-4 flex flex-col justify-center items-center h-screen'>
 
     <div className="title flex flex-col items-center text-center mb-3">
@@ -87,8 +113,8 @@ const Profile = () =>{
     </div>
     <Row>
                 <Col lg="6" md="6" sm="12" className="m-auto text-center">
-                  <form className="form__group mb-5" onSubmit={handleSubmit}>
-              <div className="form__group">
+                  <form className="form__group mb-5" >
+<div className="form__group">
               <input
                 type="text"
                 placeholder="Full name"
@@ -121,19 +147,29 @@ const Profile = () =>{
                 onChange={(e) => setAddress(e.target.value)}
               />
               {errors.address && <p className="text-red-500">{errors.address}</p>}
+              {profileImageUrl && (
+                <div className="mb-3">
+                  <img src={`https://localhost:5001/uploads/${profileImageUrl}`} alt="Profile" className="w-32 h-32 object-cover rounded-full mx-auto" />
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*" // Allow only image files
+                className="border-2 p-2 rounded-md w-full"
+                onChange={(e) => setProfileImage(e.target.files[0])} 
+              />
+              {errors.profileImage && <p className="text-red-500">{errors.profileImage}</p>}
               <button className="addTOCart__btn w-full py-2 mt-3" type="submit">
                 Update
               </button>
               {errors.submit && <p className="text-red-500">{errors.submit}</p>}
               {successMessage && <p className="text-green-500">{successMessage}</p>}
             </div>
-
-    </form>
-
-    </Col>
-    </Row>
+          </form>
+        </Col>
+      </Row>
     </div>
- )
+  )
 }
 
 export default Profile;
