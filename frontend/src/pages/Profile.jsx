@@ -39,7 +39,7 @@ const Profile = () => {
           setMobileNo(data.mobileNo);
           setEmail(data.email);
           setAddress(data.address);
-          setProfileImageUrl(data.profileImageUrl); // Assuming profileImageUrl is returned
+          setProfileImageUrl(data.profileImageUrl); 
         } else {
           console.error('Failed to fetch user profile');
         }

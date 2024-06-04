@@ -364,7 +364,8 @@ app.post('/profile', csrfProtection, authMiddleware, upload.single('profileImage
     if (err) {
       return res.status(500).json({ Error: 'Internal server error' });
     }
-    logger.info(`User ${username} has updated profile successfully.`);
+    logger.info('Update profile successfully', { username: user.username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+
     return res.json({ Status: 'Profile updated successfully' });
   });
 });
@@ -379,18 +380,74 @@ app.get('/profile', csrfProtection, authMiddleware, (req, res) => {
     }
     if (result.length > 0) {
       const user = result[0];
+      logger.info('Get user data successfully', { username: user.username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.json({
         fullName: user.fullName,
         mobileNo: user.mobileNo,
         email: user.email,
         address: user.address,
         profileImageUrl: user.profileImage 
+        
       });
     } else {
       return res.status(404).json({ Error: 'User not found' });
     }
   });
 });
+
+
+app.post('/change_password', csrfProtection, authMiddleware, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  const username = req.username;
+
+  if (!PWD_REGEX.test(newPassword)) {
+    logger.warn('Invalid password format during password change', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+    return res.status(400).json({ Error: 'Password should contain alphabets, special characters, and numbers.' });
+  }
+
+  const sqlSelect = "SELECT password FROM users WHERE username = ?";
+  db.query(sqlSelect, [username], (err, results) => {
+    if (err) {
+      logger.error('Database error during password change', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+      return res.status(500).json({ Error: 'Internal server error' });
+    }
+    if (results.length > 0) {
+      bcrypt.compare(currentPassword, results[0].password, (err, response) => {
+        if (err || !response) {
+          logger.warn('Invalid current password during password change', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+          return res.status(400).json({ Error: 'Invalid current password' });
+        }
+        bcrypt.genSalt(saltRounds, (err, salt) => {
+          if (err) {
+            logger.error('Error generating salt during password change', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+            return res.status(500).json({ Error: 'Internal server error' });
+          }
+          bcrypt.hash(newPassword, salt, (err, hash) => {
+            if (err) {
+              logger.error('Error hashing new password during password change', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+              return res.status(500).json({ Error: 'Internal server error' });
+            }
+            const sqlUpdate = "UPDATE users SET password = ? WHERE username = ?";
+            db.query(sqlUpdate, [hash, username], (err, result) => {
+              if (err) {
+                logger.error('Database error during password update', { error: err, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+                return res.status(500).json({ Error: 'Internal server error' });
+              }
+              logger.info('Password updated successfully', { username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+              return res.json({ Status: 'Password updated successfully' });
+            });
+          });
+        });
+      });
+    } else {
+      logger.warn('User not found during password change', { ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+      return res.status(404).json({ Error: 'User not found' });
+    }
+  });
+});
+
+
+
 
 app.listen(5001, () => {
   console.log("Server is running on port 5001");
