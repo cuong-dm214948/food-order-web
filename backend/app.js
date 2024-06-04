@@ -8,14 +8,19 @@ const cookieParser = require('cookie-parser');
 const csurf = require('csurf');
 const fetch = require('node-fetch');
 const  nodemailer = require('nodemailer');
-const winston = require('winston');
 dotenv.config({ path: './.env' });
+const session = require('express-session');
+const passport = require('passport');
+require('./auth');
 
 const app = express();
+app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
+app.use(passport.initialize());
+app.use(passport.session());
 app.use(express.json());
 app.use(cookieParser());
 app.use(cors({
-  origin: ['http://localhost:3000'],
+  origin: 'http://localhost:3000',
   methods: ['POST', 'GET'],
   credentials: true,
 }));
@@ -24,7 +29,44 @@ const csrfProtection = csurf({ cookie: true });
 app.use(csrfProtection);
 
 app.use((req, res, next) => {
+  res.cookie('XSRF-TOKEN', req.csrfToken());
   next();
+});
+
+
+function isLoggedIn(req, res, next) {
+  req.user ? next() : res.sendStatus(401);
+}
+
+app.get('/auth/google',
+  passport.authenticate("google", ["profile", "email"]
+  ));
+
+app.get( '/auth/google/callback',
+  passport.authenticate( 'google', {
+    successRedirect: 'http://localhost:3000',
+    failureRedirect: '/auth/google/failure'
+  })
+);
+
+app.get("/auth/google/success", (req, res) => {
+	if (req.user) {
+		res.status(200).json({
+			error: false,
+			message: "Successfully Loged In",
+			user: req.user.name,
+
+		});
+	} else {
+		res.status(403).json({ error: true, message: "Not Authorized" });
+	}
+});
+
+app.get('/auth/google/failure', (req, res) => {
+  res.status(401).json(	{		
+    error: true,
+    message: "Fail Loged In"
+  })
 });
 
 const db = mysql.createConnection({
@@ -36,6 +78,7 @@ const db = mysql.createConnection({
 
 const authMiddleware = (req, res, next) => {
   const token = req.cookies['access-token'];
+  console.log(token)
   if (!token) {
     return res.status(401).json({ Error: "No token provided" });
   }
@@ -51,15 +94,7 @@ const authMiddleware = (req, res, next) => {
   });
 };
 
-const logger = winston.createLogger({
-  level: 'info',
-  format: winston.format.json(),
-  transports: [
-    new winston.transports.File({ filename: 'logs.log' }),
-  ],
-});
-
-app.get('/', authMiddleware, (req, res) => {
+app.get('/login', authMiddleware, (req, res) => {
   return res.json({ Status: "Success", username: req.username, userType: req.userType });
 });
 
@@ -92,25 +127,23 @@ const validateCaptcha = async (captchaToken) => {
   }
 };
 
-app.get('/csrf-token', csrfProtection, (req, res) => {
+app.get('/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
 const USER_REGEX = /^[a-z0-9]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@$&*()]).{8,24}$/;
 
-app.post('/register', async (req, res) => {
+app.post('/register', csrfProtection, async (req, res) => {
   const captchaValid = await validateCaptcha(req.body.captchaToken);
   if (!captchaValid) {
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  if (USER_REGEX.test(req.body.username)) {
-    return res.status(400).json({ Error: 'Username should contain only alphabets and number.' });
-  }
-
-  if (PWD_REGEX.test(req.body.password)) {
-    return res.status(400).json({ Error: 'only alphabets, special character, numbers.' });
+  const v1 = USER_REGEX.test(req.body.username);
+  const v2 = PWD_REGEX.test(req.body.password);
+  if (!v1 || !v2) {
+    return res.status(400).send({ Error: 'Invalid us or pw' });
   }
 
   const sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
@@ -129,7 +162,6 @@ app.post('/register', async (req, res) => {
         if (err) {
           return res.status(500).send("Internal server error");
         }
-        logger.info(`User ${username} has registered in successfully.`);
         res.send({ Status: "Success" });
       });
     });
@@ -139,43 +171,41 @@ app.post('/register', async (req, res) => {
 let refreshTokens = [];
 
 app.post('/login', csrfProtection, async (req, res) => {
+
+ 
   const captchaValid = await validateCaptcha(req.body.captchaToken);
   if (!captchaValid) {
     return res.status(400).send({ Error: 'Invalid CAPTCHA' });
   }
 
-  if (USER_REGEX.test(req.body.username)) {
-    return res.status(400).json({ Error: 'Username should contain only alphabets and number.' });
+  const v1 = USER_REGEX.test(req.body.username);
+  const v2 = PWD_REGEX.test(req.body.password);
+  if (!v1 || !v2) {
+    return res.status(400).send({ Error: 'Invalid us or pw' });
   }
-
-  if (PWD_REGEX.test(req.body.password)) {
-    return res.status(400).json({ Error: 'only alphabets, special character, numbers.' });
-  }
-
+  
   const sql = "SELECT * FROM users WHERE username = ?";
   db.query(sql, [req.body.username], (err, results) => {
     if (err) {
-      logger.error('Error comparing username:', err);
       return res.json({ Error: err });
     }
     if (results.length > 0) {
-      console.log(req.body.password.toString(), results[0].password)
       bcrypt.compare(req.body.password.toString(), results[0].password, (err, response) => {
-        console.log(response)
+      
         if (err) { 
-          logger.error('Error comparing passwords:', err);
+       
           return res.json({ Error: "Invalid1 username or password" });}
         if (response) {
           const username = results[0].username;
           const role = results[0].role;
-          logger.info(`User ${username} has logged in successfully.`);
-          const token = jwt.sign({ username, role }, process.env.TOKEN_SECRET, { expiresIn: '1800s' });
+   
+          const token = jwt.sign({ username, role }, process.env.TOKEN_SECRET, { expiresIn: '7200s' });
           const refreshToken = jwt.sign({ username, role }, process.env.REFRESH_TOKEN_SECRET, { expiresIn: '25200s' });
           refreshTokens.push(refreshToken);
-          res.cookie('access-token', token, { httpOnly: true, secure: true, sameSite:'none' });
+          res.cookie('access-token', token, );
           return res.json({ Status: "Success", token, refreshToken });
         } else {
-          console.log("rres",response)
+
           return res.json({ Error: "Invalid2 username or password" });
         }
       });
@@ -208,6 +238,7 @@ app.post('/checkout', csrfProtection, async (req, res) => {
   if (!isCaptchaValid) {
     return res.status(400).json({ status: 'Error', message: 'Invalid CAPTCHA' });
   }
+  console.log(process.env.EMAIL, process.env.PASSWORD)
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     port: 465,
@@ -216,7 +247,7 @@ app.post('/checkout', csrfProtection, async (req, res) => {
     secureConnection:false,
     auth: {
       user: process.env.EMAIL,
-      pass: process.env.PASSWORD,
+      pass: 'fcbu llco dawt nydv',
     },
     tls:{
       rejectUnauthorized:true
@@ -278,15 +309,27 @@ attachments: [
 
 
 app.post('/logout', csrfProtection, (req, res) => {
+  console.log( req.body)
   const { token } = req.body;
   refreshTokens = refreshTokens.filter(t => t !== token);
   res.send("Logout successful");
 });
 
-app.get('/logout', authMiddleware, (req, res) => {
-  res.clearCookie('access-token');
-  return res.json({ Status: "Success" });
+// Combined logout endpoint
+app.get("/logout", (req, res) => {
+  // Check if the user is authenticated via Google authentication
+  if (req.isAuthenticated() && req.user.provider === 'google') {
+    // Clear the session cookie for Google authentication
+    res.clearCookie('connect.sid', { path: '/' });
+    return res.json({ Status: "Success" });
+  } else {
+    // Clear the token for regular authentication
+    res.clearCookie('access-token');
+    return res.json({ Status: "Success" });
+  }
 });
+
+
 
 app.post('/profile', csrfProtection, authMiddleware, (req, res) => {
   const { fullName, mobileNo, email, address } = req.body;
@@ -304,13 +347,14 @@ app.post('/profile', csrfProtection, authMiddleware, (req, res) => {
   if (!/\d/.test(address) || !/[A-Za-z]/.test(address)) {
     return res.status(400).json({ Error: 'Address should contain both numbers and text.' });
   }
+  console.log("sdhbuwef")
 
   const sql = "UPDATE users SET fullName = ?, mobileNo = ?, email = ?, address = ? WHERE username = ?";
   db.query(sql, [fullName, mobileNo, email, address, username], (err, result) => {
     if (err) {
       return res.status(500).json({ Error: 'Internal server error' });
     }
-    logger.info(`User ${username} has updated profile successfully.`);
+
     return res.json({ Status: 'Profile updated successfully' });
   });
 });

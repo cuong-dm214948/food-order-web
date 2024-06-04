@@ -6,7 +6,6 @@ import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { cartUiActions } from "../../store/shopping-cart/cartUiSlice";
 import "../../styles/header.css";
-import { signOut, updateProfile } from "firebase/auth";
 
 const nav__links = [
   {
@@ -27,15 +26,13 @@ const nav__links = [
   },
 ];
 
-const Header = () => {
+const Header = ({ userName}) => {
   const menuRef = useRef();
   const headerRef = useRef();
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [auth, setAuth] = useState(false);
-  const [message, setMessage] = useState('');
-  const [username, setUserName] = useState('');
+  const [auth, setAuth] = useState(!userName);
 
   const toggleMenu = () => {
     if (menuRef.current) {
@@ -71,27 +68,21 @@ const Header = () => {
 
   axios.defaults.withCredentials = true;
 
-  useEffect(() => {
-    axios.get('http://localhost:5001')
-      .then(res => {
-        if (res.data.Status === "Success") {
-          setAuth(true);
-          setUserName(res.data.username);
-        } else {
-          setAuth(false);
-          setMessage(res.data.Error);
-        }
-      });
-  }, []);
-
-  const handleSignout = () => {
-    axios.get('http://localhost:5001/logout')
-      .then(res => {
-        if (res.data.Status === 'Success') {
-          setAuth(false);
-        }
-      });
+  const handleLogout = async () => {
+    try {
+      const response = await axios.get('http://localhost:5001/logout');
+      if (response.data.Status === 'Success') { // Check the response status
+        setAuth(false);
+  
+        navigate('/login'); // Redirect to login page after logout
+      } else {
+        console.log('Logout failed:', response.data.Error); // Log the error message if logout fails
+      }
+    } catch (error) {
+      console.log('Logout failed:', error);
+    }
   };
+  
 
   const handleUpdateProfile = () => {
     navigate('/Accountinfo');
@@ -125,7 +116,6 @@ const Header = () => {
                   {item.display}
                 </NavLink>
               ))}
-
             </div>
           </div>
 
@@ -139,8 +129,8 @@ const Header = () => {
             {auth ?
               <span className="user">
                 <i className="ri-user-line"></i>
-                <p onClick={handleUpdateProfile}>{username}</p>
-                <p onClick={handleSignout}>Sign out</p>
+                <p onClick={handleUpdateProfile}>{userName}</p>
+                <button onClick={handleLogout}>Sign out</button>
               </span>
               :
               <span className="user">
@@ -153,7 +143,6 @@ const Header = () => {
             <span className="mobile__menu" onClick={toggleMenu}>
               <i className="ri-menu-line"></i>
             </span>
-
           </div>
         </div>
       </Container>

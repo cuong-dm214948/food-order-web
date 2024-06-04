@@ -108,6 +108,7 @@ const Register = () => {
         setError(true);
       }
     } catch (err) {
+      console.log(err)
       setLoading(false);
       setError(true);
       setErrMsg('Registration failed');

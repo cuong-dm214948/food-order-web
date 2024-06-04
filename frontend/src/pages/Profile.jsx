@@ -1,6 +1,7 @@
-import { Container, Row, Col } from "reactstrap";
+import { Container, Row, Col, Form } from "reactstrap";
 import "../styles/register.css";
 import React, { useState, useEffect } from 'react';
+import axios from "axios";
 
 const Profile = () =>{
   const [fullName, setFullName] = useState('');
@@ -12,21 +13,19 @@ const Profile = () =>{
   const [successMessage, setSuccessMessage] = useState('');
 
   useEffect(() => {
+    // Fetch CSRF token when the component mounts
     const fetchCsrfToken = async () => {
       try {
-        const response = await fetch('https://localhost:5001/csrf-token', {
-          credentials: 'include',
-        });
-        const data = await response.json();
-        setCsrfToken(data.csrfToken);
-      } catch (error) {
-        console.error('Error fetching CSRF token:', error);
+        const response = await axios.get('http://localhost:5001/csrf-token', { withCredentials: true });
+        setCsrfToken(response.data.csrfToken);
+      } catch (err) {
+        console.error('Error fetching CSRF token', err);
       }
     };
 
     fetchCsrfToken();
   }, []);
-
+  
   const validateInputs = () => {
     const errors = {};
 
@@ -57,15 +56,13 @@ const Profile = () =>{
     } else {
       setErrors({});
       try {
-        const response = await fetch('https://localhost:5001/profile', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'CSRF-Token': csrfToken,  // Include CSRF token in headers
-          },
-          credentials: 'include',
-          body: JSON.stringify({ fullName, mobileNo, email, address }),
-        });
+        const response = await axios.post('http://localhost:5001/profile', { fullName, mobileNo, email, address }, {
+        headers: {
+          'CSRF-Token': csrfToken
+        },
+        withCredentials: true,
+      });
+      console.log(response)
 
         if (response.ok) {
           const data = await response.json();
@@ -81,6 +78,7 @@ const Profile = () =>{
     }
   };
 
+
   return(
     <div className='w-full max-w-md mx-auto py-3 py-md-4 flex flex-col justify-center items-center h-screen'>
 
@@ -89,8 +87,8 @@ const Profile = () =>{
     </div>
     <Row>
                 <Col lg="6" md="6" sm="12" className="m-auto text-center">
-                  <form className="form__group mb-5" >
-<div className="form__group">
+                  <form className="form__group mb-5" onSubmit={handleSubmit}>
+              <div className="form__group">
               <input
                 type="text"
                 placeholder="Full name"

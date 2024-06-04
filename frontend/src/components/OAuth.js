@@ -1,65 +1,38 @@
-import React, { useState } from 'react';
-import { GoogleLogin, GoogleLogout } from 'react-google-login';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
+import "./OAuth.css";
+import { Link } from "react-router-dom";
+import google from "../assets/images/google.png"
 
-function Login() {
-    const clientId = "354174433221-igoq9iflc7peqgkk168qc92gr1552ro4.apps.googleusercontent.com"
-    const [showloginButton, setShowloginButton] = useState(true);
-    const [showlogoutButton, setShowlogoutButton] = useState(false);
-    const onLoginSuccess = (res) => {
-        console.log('Login Success:', res.profileObj);
-        setShowloginButton(false);
-        setShowlogoutButton(true);
-    };
+function OAuth() {
+    const [user, setUser] = useState(null);
 
-    const onLoginFailure = (res) => {
-        console.log('Login Failed:', res);
-    };
-
-    const onSignoutSuccess = () => {
-        alert("You have been logged out successfully");
-        console.clear();
-        setShowloginButton(true);
-        setShowlogoutButton(false);
-    };
+    const handleLogin =  () => {
+		window.open(
+			`http://localhost:5001/auth/google/callback`,
+			"_self"
+		);
+	};
 
     return (
         <div className="login">
-           <center>
-               
-            <div className="loginDiv">
-            { showloginButton ?
-                <>
-                {/* <h2>Sign in With Google</h2>/ */}
-                <GoogleLogin
-                    clientId={clientId}                  
-                    onSuccess={onLoginSuccess}
-                    onFailure={onLoginFailure}
-                    cookiePolicy={'single_host_origin'}
-                    isSignedIn={true}
-                  
-                />
-                </>: null}
-            </div>
-           </center>
-
-            <div className="logoutDiv">
-            { showlogoutButton ?
-                <>
-
-                <GoogleLogout
-                    clientId={clientId}
-                    buttonText="Sign Out"
-                    onLogoutSuccess={onSignoutSuccess}
-                    className="logoutbtn"
-                >
-                    Sign out
-                </GoogleLogout><br/>
-                
-                </> : null
-            }
-            </div>
-            
+            <center>
+                <div className="loginDiv">
+                    {!user ? (
+                        <>
+                           	<button className="google_btn" onClick={handleLogin}>
+                                <img src={google} alt="google" />
+                                <span>Sing in with Google</span>
+                            </button>
+                        </>
+                    ) : (
+                        <div>
+                        </div>
+                    )}
+                </div>
+            </center>
         </div>
     );
 }
-export default Login;
+
+export default OAuth;
