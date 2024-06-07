@@ -29,10 +29,10 @@ const Profile = () => {
 
     const fetchUserProfile = async () => {
       try {
-        const response = await fetch('https://localhost:5001/profile', {
+        const response = await axios.get('https://localhost:5001/profile', {
           credentials: 'include',
         });
-        if (response.ok) {
+        if (response.data) {
           const data = await response.json();
           setFullName(data.fullName);
           setMobileNo(data.mobileNo);
@@ -80,20 +80,18 @@ const Profile = () => {
     } else {
       setErrors({});
       try {
-        const response = await fetch('https://localhost:5001/profile', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'CSRF-Token': csrfToken,  // Include CSRF token in headers
-          },
-          credentials: 'include',
-          body: JSON.stringify({ fullName, mobileNo, email, address }),
-        });
 
-        if (response.ok) {
-          const data = await response.json();
+        const response = await axios.post('http://localhost:5001/profile', 
+        { fullName, mobileNo, email, address }, 
+        {
+        headers: {
+          'CSRF-Token': csrfToken
+        },
+        withCredentials: true,
+      });
+      
+        if (response.data.Status = "Success") {
           setSuccessMessage('Profile updated successfully!');
-          console.log(data);
         } else {
           const errorData = await response.json();
           setErrors({ submit: errorData.message || 'An error occurred' });
@@ -113,7 +111,7 @@ const Profile = () => {
     </div>
     <Row>
                 <Col lg="6" md="6" sm="12" className="m-auto text-center">
-                  <form className="form__group mb-5" >
+                  <form className="form__group mb-5" onSubmit={handleSubmit} >
 <div className="form__group">
               <input
                 type="text"
@@ -159,6 +157,7 @@ const Profile = () => {
                 onChange={(e) => setProfileImage(e.target.files[0])} 
               />
               {errors.profileImage && <p className="text-red-500">{errors.profileImage}</p>}
+              <br></br>
               <button className="addTOCart__btn w-full py-2 mt-3" type="submit">
                 Update
               </button>

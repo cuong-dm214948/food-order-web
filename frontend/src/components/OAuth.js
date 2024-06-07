@@ -9,7 +9,7 @@ function OAuth() {
 
     const handleLogin =  () => {
 		window.open(
-			`http://localhost:5001/auth/google/callback`,
+			`http://localhost:5001/auth/google`,
 			"_self"
 		);
 	};

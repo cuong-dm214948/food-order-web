@@ -47,9 +47,8 @@ const Login = () => {
     }
 
     dispatch(signInStart());
-   
     try {
-      const res = await axios.post('http://localhost:5001/login', {
+      const res = await axios.post('http://localhost:5001/auth/login', {
         username: user,
         password: pwd,
         captchaToken: captchaToken,
@@ -59,20 +58,26 @@ const Login = () => {
         },
         withCredentials: true,
       });
-
+      console.log(res.data.Role)
+    
       if (res.data.Status === 'Success') {
+        if(res.data.Role === "user") {
         dispatch(signInSuccess(res.data));
         setLoginStatus('Login successful!');
         navigateTo('/');
+        window.location.reload(true);}
+        else{
+          navigateTo('/dashboard');
+        }
       } else {
         console.log("data",res.data)
         dispatch(signInFailure());
-        setLoginStatus('Login failed!');
+        setLoginStatus('Invalid username or password!');
       }
     } catch (err) {
       console.log(err)
       dispatch(signInFailure());
-      setLoginStatus('Login failed!');
+      setLoginStatus('Invalid username or password!');
       console.error(err);
     }
   }

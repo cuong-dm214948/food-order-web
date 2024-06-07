@@ -5,6 +5,7 @@ import Footer from "../Footer/Footer.jsx";
 import Routes from "../../routes/Routers";
 import Carts from "../UI/cart/Carts.jsx";
 import { useSelector } from "react-redux";
+import Dashboard from "../Dashboard.jsx";
 
 const Layout = () => {
   const showCart = useSelector((state) => state.cartUi.cartIsVisible);
@@ -26,9 +27,10 @@ const Layout = () => {
   const checkAuthStatus = async () => {
     try {
       const { data } = await axios.get('http://localhost:5001/login', { withCredentials: true });
+      console.log(data)
       if (data.Status === "Success" && data.username) {
         setUserName(data.username);
-        console.log(data.username)
+     
       }
     } catch (err) {
       console.log(err);
@@ -46,13 +48,20 @@ const Layout = () => {
 
   return (
     <div className="d-flex flex-column vh-100 justify-content-between">
-      <Header userName={userName} />
-      {showCart && <Carts />}
-      <div>
-        <Routes />
-      </div>
-      <Footer />
+          {userName === 'admin' ? (
+            <Routes path="/dashboard" element={<Dashboard />} />
+          ) : (
+            <div className="d-flex flex-column vh-100 justify-content-between">
+              <Header userName={userName} />
+              {showCart && <Carts />}
+              <div>
+                <Routes />
+              </div>
+              <Footer />
+            </div>
+          )}
     </div>
+
   );
 };
 

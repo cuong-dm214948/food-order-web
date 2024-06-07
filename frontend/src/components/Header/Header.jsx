@@ -33,7 +33,6 @@ const Header = ({ userName}) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [auth, setAuth] = useState(!userName);
-
   const toggleMenu = () => {
     if (menuRef.current) {
       menuRef.current.classList.toggle("show__menu");
@@ -90,9 +89,10 @@ const Header = ({ userName}) => {
 
   const handleLogo = () => {
     navigate('/');
-  };
+  }; 
 
   return (
+
     <header className="header" ref={headerRef}>
       <Container>
         <div className="nav__wrapper d-flex align-items-center justify-content-between">
@@ -128,14 +128,16 @@ const Header = ({ userName}) => {
 
             {auth ?
               <span className="user">
-                <i className="ri-user-line"></i>
+                <i 
+            
+                className="ri-user-line" />
                 <p onClick={handleUpdateProfile}>{userName}</p>
                 <button onClick={handleLogout}>Sign out</button>
               </span>
               :
               <span className="user">
                 <Link to="/login">
-                  <i className="ri-user-line"></i>
+                  <i className="ri-user-line" />
                 </Link>
               </span>
             }
@@ -147,6 +149,7 @@ const Header = ({ userName}) => {
         </div>
       </Container>
     </header>
+  
   );
 };
 

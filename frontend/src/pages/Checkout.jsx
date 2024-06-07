@@ -40,7 +40,7 @@ const Checkout = () => {
       return;
     }
     setLoading(true);
-    axios.post('http://localhost:5001/checkout', {
+    axios.post('http://localhost:5001/auth/checkout', {
       cartItems,
       totalAmount,
       _csrf: csrfToken,

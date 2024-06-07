@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
 import axios from 'axios';
 import { Container, Row, Col } from 'reactstrap';
 import "../styles/register.css";
@@ -28,41 +27,39 @@ const ChangePassword = () => {
       });
   }, []);
 
-  const handleCaptchaChange = (value) => {
-    setCaptchaToken(value);
-  };
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     if (newPassword !== confirmPassword) {
       setMessage('Passwords do not match.');
       return;
     }
-    if (!captchaToken) {
-      setMessage('Please complete the CAPTCHA');
-      return;
-    }
-    if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@$&*()]).{8,24}$/.test(newPassword)) {
-      setMessage('Password should contain at least one lowercase letter, one uppercase letter, one digit, one special character, and be between 8 to 24 characters long.');
+
+    const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@$&*()]).{8,24}$/;
+
+    const v2 = PWD_REGEX.test(newPassword);
+    if (!v2) {
+      setMessage("Invalid Entry");
+      setLoading(false);
       return;
     }
 
     setLoading(true);
-
+    console.log(csrfToken, currentPassword, newPassword)
     try {
       const response = await axios.post('http://localhost:5001/change_password', {
-        currentPassword,
-        newPassword,
-        _csrf: csrfToken,
-        captchaToken
-      }, { withCredentials: true });
+        currentPassword,newPassword},
+        {
+          headers: {
+            'CSRF-Token': csrfToken
+          },
+          withCredentials: true,
+        });
 
       if (response.data.Status === 'Password updated successfully') {
         setMessage('Password updated successfully.');
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
-        setCaptchaToken('');
       } else {
         setMessage(response.data.Error || 'Error updating password.');
       }
@@ -106,10 +103,6 @@ const ChangePassword = () => {
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
-              />
-              <ReCAPTCHA
-                sitekey={RECAPTCHA_SITEKEY}
-                onChange={handleCaptchaChange}
               />
               <button 
                 className='addTOCart__btn w-full py-2 mt-3' 
