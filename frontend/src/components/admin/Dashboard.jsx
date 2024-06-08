@@ -1,8 +1,9 @@
 import React from 'react';
-import { Link, Outlet, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import logo from "../assets/images/res-logo.png";
+import logo from "../../assets/images/res-logo.png";
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import Routers from '../../routes/Routers';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -10,11 +11,12 @@ export default function Dashboard() {
   axios.defaults.withCredentials = true;
 
   const handleLogout = () => {
-    axios.get('http://localhost:3000/auth/logout')
+    axios.get('http://localhost:5001/auth/logout')
       .then(result => {
-        if (result.data.Status) {
-          localStorage.removeItem("valid");
-          navigate('/');
+        console.log(result.data)
+        if (result.data.Status === 'Success') {
+          navigate("/")        
+          
         }
       })
       .catch(error => {
@@ -95,7 +97,8 @@ export default function Dashboard() {
             <h4>Admin Management System</h4>
           </div>
           
-          <Outlet />
+          <div><Routers /></div>
+          
         </div>
       </div>
     </div>

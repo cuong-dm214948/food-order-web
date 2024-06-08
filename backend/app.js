@@ -12,9 +12,11 @@ const session = require('express-session');
 const passport = require('passport');
 const multer = require('multer')
 require('./auth');
-const  adminrouter = require ('./routes/user.js')
+const  userrouter = require ('./routes/user.js')
+const adminrouter =require ('./routes/adminrouter.js')
 const checkout = require('./routes/checkout.js')
 const db = require ('./utils/db.js')
+const logout = require ('./routes/logout.js')
 
 const app = express();
 app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
@@ -37,7 +39,9 @@ app.use((req, res, next) => {
 });
 
 app.use('/auth', adminrouter )
+app.use('/auth', userrouter )
 app.use('/auth', checkout )
+app.use('/auth', logout )
 
 function isLoggedIn(req, res, next) {
   req.user ? next() : res.sendStatus(401);
@@ -212,8 +216,6 @@ app.get("/logout", (req, res) => {
     return res.json({ Status: "Success" });
   }
 });
-
-
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {

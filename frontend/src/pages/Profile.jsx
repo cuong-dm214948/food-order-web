@@ -2,6 +2,7 @@ import { Container, Row, Col, Form } from "reactstrap";
 import "../styles/register.css";
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
+import profileValidation from '../utils/validation.js'
 
 const Profile = () => {
   const [fullName, setFullName] = useState('');
@@ -9,7 +10,7 @@ const Profile = () => {
   const [email, setEmail] = useState('');
   const [address, setAddress] = useState('');
   const [profileImage, setProfileImage] = useState(null);
-  const [profileImageUrl, setProfileImageUrl] = useState(''); // To display existing profile image
+  const [profileImageUrl, setProfileImageUrl] = useState('');
   const [csrfToken, setCsrfToken] = useState('');
   const [errors, setErrors] = useState({});
   const [successMessage, setSuccessMessage] = useState('');
@@ -49,32 +50,19 @@ const Profile = () => {
 
     fetchUserProfile();
   }, []);
-  
-  const validateInputs = () => {
-    const errors = {};
-
-    if (!/^[A-Za-z\s]+$/.test(fullName)) {
-      errors.fullName = 'Full name should contain only alphabets and spaces.';
-    }
-
-    if (!/^\d{10}$/.test(mobileNo)) {
-      errors.mobileNo = 'Mobile number should contain exactly 10 digits.';
-    }
-
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      errors.email = 'Email is invalid.';
-    }
-
-    if (!/\d/.test(address) || !/[A-Za-z]/.test(address)) {
-      errors.address = 'Address should contain both numbers and text.';
-    }
-
-    return errors;
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const validationErrors = validateInputs();
+
+    const values = {
+      fullName: fullName, 
+      mobileNo: mobileNo, 
+      email: email, 
+      address: address
+    };
+    
+    const validationErrors = profileValidation(values);
+
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {

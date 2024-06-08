@@ -1,25 +1,23 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import axios from "axios";
-import Header from "../Header/Header.jsx";
-import Footer from "../Footer/Footer.jsx";
-import Routes from "../../routes/Routers";
-import Carts from "../UI/cart/Carts.jsx";
-import { useSelector } from "react-redux";
-import Dashboard from "../Dashboard.jsx";
+import { useDispatch, useSelector } from "react-redux";
+import UserLayout from "./UserLayout.js";
+import AdminLayout from "./AdminLayout.js";
+import { signInSuccess, signInFailure } from '../../store/user/userSlice.js';
 
 const Layout = () => {
-  const showCart = useSelector((state) => state.cartUi.cartIsVisible);
-  const [userName, setUserName] = useState('');
+  const dispatch = useDispatch();
+  const currentUser = useSelector((state) => state.user.currentUser);
 
-  const getUser = async () => {
+  const fetchUser = async () => {
     try {
       const url = `http://localhost:5001/auth/google/success`;
       const { data } = await axios.get(url, { withCredentials: true });
-      console.log(data)
-      if (data && data.user && data.user.givenName) {
-        setUserName(data.user.givenName);
+      if (data && data.user) {
+        dispatch(signInSuccess(data.user));
       }
     } catch (err) {
+      dispatch(signInFailure(err.message));
       console.log(err);
     }
   };
@@ -27,41 +25,32 @@ const Layout = () => {
   const checkAuthStatus = async () => {
     try {
       const { data } = await axios.get('http://localhost:5001/login', { withCredentials: true });
-      console.log(data)
       if (data.Status === "Success" && data.username) {
-        setUserName(data.username);
-     
+        dispatch(signInSuccess(data.username));
       }
     } catch (err) {
+      dispatch(signInFailure(err.message));
       console.log(err);
     }
   };
 
   useEffect(() => {
     const fetchData = async () => {
-      await getUser();
+      await fetchUser();
       await checkAuthStatus();
-      
     };
     fetchData();
-  }, []);
+  }, [dispatch, fetchUser, checkAuthStatus]);
+  
 
   return (
-    <div className="d-flex flex-column vh-100 justify-content-between">
-          {userName === 'admin' ? (
-            <Routes path="/dashboard" element={<Dashboard />} />
-          ) : (
-            <div className="d-flex flex-column vh-100 justify-content-between">
-              <Header userName={userName} />
-              {showCart && <Carts />}
-              <div>
-                <Routes />
-              </div>
-              <Footer />
-            </div>
-          )}
-    </div>
-
+    <>
+      {currentUser && currentUser === 'admin' ? (
+        <AdminLayout />
+      ) : (
+        <UserLayout />
+      )}
+    </>
   );
 };
 

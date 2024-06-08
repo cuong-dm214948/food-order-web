@@ -10,7 +10,7 @@ import "../../styles/header.css";
 const nav__links = [
   {
     display: "Home",
-    path: "/",
+    path: "/home",
   },
   {
     display: "Menu",
@@ -22,17 +22,30 @@ const nav__links = [
   },
   {
     display: "Discount",
-    path: "/contact",
+    path: "/discount",
   },
 ];
 
-const Header = ({ userName}) => {
+const Header = () => {
+  const [userName, setUserName] = useState("");
+  const currentUser = useSelector((state) => state.user.currentUser);
+  const [auth, setAuth] = useState(false);
+  console.log(currentUser)
+  useEffect(() => {
+    if (currentUser === null) {
+      setAuth(false);
+    } else {
+      setAuth(true);
+      setUserName(currentUser);
+    }
+  }, [currentUser]);
+
   const menuRef = useRef();
   const headerRef = useRef();
   const totalQuantity = useSelector((state) => state.cart.totalQuantity);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [auth, setAuth] = useState(!userName);
+  
   const toggleMenu = () => {
     if (menuRef.current) {
       menuRef.current.classList.toggle("show__menu");
@@ -70,19 +83,17 @@ const Header = ({ userName}) => {
   const handleLogout = async () => {
     try {
       const response = await axios.get('http://localhost:5001/logout');
-      if (response.data.Status === 'Success') { // Check the response status
+      if (response.data.Status === 'Success') {
         setAuth(false);
-  
-        navigate('/login'); // Redirect to login page after logout
+        navigate('/login');
       } else {
-        console.log('Logout failed:', response.data.Error); // Log the error message if logout fails
+        console.log('Logout failed:', response.data.Error);
       }
     } catch (error) {
       console.log('Logout failed:', error);
     }
   };
   
-
   const handleUpdateProfile = () => {
     navigate('/Accountinfo');
   };
@@ -92,7 +103,6 @@ const Header = ({ userName}) => {
   }; 
 
   return (
-
     <header className="header" ref={headerRef}>
       <Container>
         <div className="nav__wrapper d-flex align-items-center justify-content-between">
@@ -103,7 +113,7 @@ const Header = ({ userName}) => {
 
           {/* ======= menu ======= */}
           <div className="navigation" ref={menuRef}>
-            <div className="menu d-flex align-items-center gap-5" onClick={closeMenu} >
+            <div className="menu d-flex align-items-center gap-5" onClick={closeMenu}>
               {nav__links.map((item, index) => (
                 <NavLink
                   to={item.path}
@@ -126,21 +136,19 @@ const Header = ({ userName}) => {
               <span className="cart__badge">{totalQuantity}</span>
             </span>
 
-            {auth ?
+            {auth ? (
               <span className="user">
-                <i 
-            
-                className="ri-user-line" />
+                <i className="ri-user-line" />
                 <p onClick={handleUpdateProfile}>{userName}</p>
                 <button onClick={handleLogout}>Sign out</button>
               </span>
-              :
+            ) : (
               <span className="user">
                 <Link to="/login">
                   <i className="ri-user-line" />
                 </Link>
               </span>
-            }
+            )}
 
             <span className="mobile__menu" onClick={toggleMenu}>
               <i className="ri-menu-line"></i>
@@ -149,7 +157,6 @@ const Header = ({ userName}) => {
         </div>
       </Container>
     </header>
-  
   );
 };
 

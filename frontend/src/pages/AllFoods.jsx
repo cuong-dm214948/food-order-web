@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Helmet from "../components/Helmet/Helmet";
 import { Container, Row, Col } from "reactstrap";
 import products from "../assets/fake-data/products";
 import ProductCard from "../components/UI/product-card/ProductCard";
@@ -50,7 +49,7 @@ const AllFoods = () => {
   }, [category, navigate]);
 
   return (
-    <Helmet title="All-Foods">
+    
       <section>
         <Container>
           <Col lg="12">
@@ -127,7 +126,7 @@ const AllFoods = () => {
           </Row>
         </Container>
       </section>
-    </Helmet>
+    
   );
 };
 
