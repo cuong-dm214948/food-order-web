@@ -1,15 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useCallback } from "react";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import UserLayout from "./UserLayout.js";
 import AdminLayout from "./AdminLayout.js";
-import { signInSuccess, signInFailure } from '../../store/user/userSlice.js';
+import { signInSuccess, signInFailure} from '../../store/user/userSlice.js';
 
 const Layout = () => {
   const dispatch = useDispatch();
   const currentUser = useSelector((state) => state.user.currentUser);
-
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const url = `http://localhost:5001/auth/google/success`;
       const { data } = await axios.get(url, { withCredentials: true });
@@ -18,11 +17,10 @@ const Layout = () => {
       }
     } catch (err) {
       dispatch(signInFailure(err.message));
-      console.log(err);
     }
-  };
+  }, [dispatch]);
 
-  const checkAuthStatus = async () => {
+  const checkAuthStatus = useCallback(async () => {
     try {
       const { data } = await axios.get('http://localhost:5001/login', { withCredentials: true });
       if (data.Status === "Success" && data.username) {
@@ -30,9 +28,8 @@ const Layout = () => {
       }
     } catch (err) {
       dispatch(signInFailure(err.message));
-      console.log(err);
     }
-  };
+  }, [dispatch]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -40,8 +37,7 @@ const Layout = () => {
       await checkAuthStatus();
     };
     fetchData();
-  }, [dispatch, fetchUser, checkAuthStatus]);
-  
+  }, [fetchUser, checkAuthStatus]);
 
   return (
     <>

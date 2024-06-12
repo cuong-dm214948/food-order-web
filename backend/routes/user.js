@@ -106,4 +106,31 @@ adminrouter.post('/login', csrfProtection, async(req,res)=>{
     });
 })
 
+
+adminrouter.get("/product", csrfProtection, async(req,res)=>{
+  const sql = "SELECT * FROM product";
+
+  db.query(sql, (err, result) => {
+      if(err) return res.json({Status: false, Error: err});
+      return res.json({Status: "Success", products: result});
+  });
+});
+
+adminrouter.post('/checkoutCash', csrfProtection, async (req, res) => {
+  const { userId, cartItems, totalAmount } = req.body;
+  const products = JSON.stringify(cartItems)
+  const timestamp = new Date().toISOString();
+  const method = "Cash"
+
+  // Assuming 'orders' table has columns: id, cart_items, total_amount, timestamp
+  const sql = "INSERT INTO orders (userid, products, method, total, timestamp) VALUES (?, ?, ?, ?, ?)";
+  const values = [userId, products, method, totalAmount, timestamp];
+  db.query(sql, values, (err, result)=> {
+    if(err) return res.json({Status: false, Error: err});
+    logger.info(`User ${req.body.username} has checked out in successfully.`, { timestamp: new Date().toISOString() });
+    return res.json({Status: "Success"});
+  });
+
+});
+
 module.exports = adminrouter;

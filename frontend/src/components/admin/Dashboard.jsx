@@ -4,19 +4,20 @@ import axios from 'axios';
 import logo from "../../assets/images/res-logo.png";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Routers from '../../routes/Routers';
+import { useDispatch, useSelector } from "react-redux";
+import { signInSuccess, signInFailure, signOut } from '../../store/user/userSlice.js';
 
 export default function Dashboard() {
   const navigate = useNavigate();
-
+  const dispatch = useDispatch();
   axios.defaults.withCredentials = true;
 
   const handleLogout = () => {
     axios.get('http://localhost:5001/auth/logout')
       .then(result => {
-        console.log(result.data)
         if (result.data.Status === 'Success') {
-          navigate("/")        
-          
+          dispatch(signOut());
+          navigate("/")              
         }
       })
       .catch(error => {
@@ -53,12 +54,12 @@ export default function Dashboard() {
               </li>
               <li className="w-100">
                 <Link
-                  to="/dashboard/employee"
+                  to="/dashboard/products"
                   className="nav-link px-0 align-middle"
                 >
                   <i className="fs-4 bi-people ms-2"></i>
                   <span className="ms-2 d-none d-sm-inline">
-                    Manage users
+                    Manage products
                   </span>
                 </Link>
               </li>
@@ -73,7 +74,7 @@ export default function Dashboard() {
               </li>
               <li className="w-100">
                 <Link
-                  to="/dashboard/profile"
+                  to="/dashboard/order"
                   className="nav-link px-0 align-middle"
                 >
                   <i className="fs-4 bi-person ms-2"></i>

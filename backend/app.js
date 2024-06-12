@@ -16,7 +16,6 @@ const  userrouter = require ('./routes/user.js')
 const adminrouter =require ('./routes/adminrouter.js')
 const checkout = require('./routes/checkout.js')
 const db = require ('./utils/db.js')
-const logout = require ('./routes/logout.js')
 
 const app = express();
 app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
@@ -41,7 +40,6 @@ app.use((req, res, next) => {
 app.use('/auth', adminrouter )
 app.use('/auth', userrouter )
 app.use('/auth', checkout )
-app.use('/auth', logout )
 
 function isLoggedIn(req, res, next) {
   req.user ? next() : res.sendStatus(401);
@@ -130,6 +128,8 @@ const validateCaptcha = async (captchaToken) => {
     return false;
   }
 };
+
+
 
 app.get('/csrf-token', (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
@@ -278,7 +278,6 @@ app.post('/profile', csrfProtection, authMiddleware, upload.single('profileImage
 
 app.get('/profile', csrfProtection, authMiddleware, (req, res) => {
   const username = req.username;
-  console.log(username)
   const sql = "SELECT fullname, phone, email, address FROM accountinfo WHERE user_id = (SELECT id FROM users WHERE username = ?)";
   db.query(sql, [username], (err, result) => {
     if (err) {
@@ -286,20 +285,45 @@ app.get('/profile', csrfProtection, authMiddleware, (req, res) => {
     }
     if (result.length > 0) {
       console.log(result)
-      const user = result[0];
+      const user = result[result.length - 1];
       logger.info('Get user data successfully', { username: user.username, ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
       return res.json({
-        fullName: user.fullName,
-        mobileNo: user.mobileNo,
+        fullName: user.fullname,
+        mobileNo: user.phone,
         email: user.email,
         address: user.address,
-        profileImageUrl: user.profileImage 
         
       });
     } else {
       return res.status(404).json({ Error: 'User not found' });
     }
   });
+});
+
+app.get('/order', csrfProtection, authMiddleware, async (req, res) => {
+  const username = req.username; // Assuming username is set by authMiddleware
+  console.log(username)
+  if (username ==="admin"){
+    const sql = "SELECT * FROM orders";
+
+  db.query(sql, (err, result) => {
+    if (err) {
+      console.error('Error fetching orders:', err);
+      return res.json({ Status: false, Error: err });
+    }
+    return res.json({ orders: result });
+  });
+  }
+  else{
+  const sql = "SELECT * FROM orders WHERE userid = ?";
+
+  db.query(sql, [username], (err, result) => {
+    if (err) {
+      console.error('Error fetching orders:', err);
+      return res.json({ Status: false, Error: err });
+    }
+    return res.json({ orders: result });
+  });}
 });
 
 

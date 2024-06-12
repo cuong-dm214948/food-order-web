@@ -2,20 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Container, Row, Col } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
-import ReCAPTCHA from 'react-google-recaptcha';
 import axios from 'axios';
 import Helmet from '../components/Helmet/Helmet';
 import CommonSection from '../components/UI/common-section/CommonSection';
 import "../styles/checkout.css";
 import { AiFillCheckCircle } from "react-icons/ai";
 
-const RECAPTCHA_SITEKEY = process.env.REACT_APP_CLIENT_SITE_KEY;
-
 const Checkout = () => {
   const cartItems = useSelector((state) => state.cart.cartItems);
   const totalAmount = useSelector((state) => state.cart.totalAmount);
   const [csrfToken, setCsrfToken] = useState('');
-  const [captchaToken, setCaptchaToken] = useState('');
+  const userId = useSelector((state) => state.user.currentUser);
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [loadingCash, setLoadingCash] = useState(false);
@@ -35,16 +32,13 @@ const Checkout = () => {
 
   const handleCheckout = (e) => {
     e.preventDefault();
-    if (!captchaToken) {
-      alert('Please complete the CAPTCHA');
-      return;
-    }
     setLoading(true);
+    
     axios.post('http://localhost:5001/auth/checkout', {
+      
       cartItems,
       totalAmount,
       _csrf: csrfToken,
-      captchaToken
     })
       .then(response => {
         if (response.data.status === 'Success') {
@@ -63,12 +57,36 @@ const Checkout = () => {
       });
   };
 
-  const handleCash = () => {
+  const handleCash = (e) => {
+    e.preventDefault();
     setLoadingCash(true);
+
+    axios.post('http://localhost:5001/auth/checkoutCash', {
+      userId,
+      cartItems,
+      totalAmount,
+      _csrf: csrfToken,
+    })
+      .then(response => {
+        console.log(response.data.status
+        )
+        if (response.data.Status === 'Success') {
+          setOrderSuccess(true);
+
+        } else {
+          setError(true);
+        }
+      })
+      .catch(error => {
+        console.error('Error during checkout:', error);
+        setError(true);
+      })
+      .finally(() => {
+        setLoadingCash(false);
+      });
     
     setTimeout(() => {
       setLoadingCash(false);
-      setOrderSuccess(true);
     }, 1000); // 1 second delay
   }
 
@@ -85,6 +103,11 @@ const Checkout = () => {
         <span>
           Your order is being processed and will be served as fast as possible.
         </span>
+        <br></br>
+        <span>
+          You can see order detail in order history.
+        </span>
+
       </div>
     );
   }
@@ -110,11 +133,6 @@ const Checkout = () => {
                   <span className="cart__subtotal">{totalAmount}</span>K
                 </h6>
                 <p>Taxes already included</p>
-               
-                  <ReCAPTCHA
-                    sitekey = {RECAPTCHA_SITEKEY}
-                    onChange = {token => setCaptchaToken(token)}
-                  />
               
                   <button className="addTOCart__btn mt-4" onClick={handleCash} disabled={loadingCash}>
                     {loadingCash ? 'Processing...' : 'Thanh toán khi nhận hàng'}
@@ -135,13 +153,13 @@ const Checkout = () => {
 };
 
 const Tr = ({ item }) => {
-  const { id, image01, title, price, quantity } = item;
+  const { id, image, name, price, quantity } = item;
   return (
     <tr>
       <td className="text-center cart__img-box">
-        <img src={image01} alt="" />
+        <img src={require(`../assets/image/${image}`)} alt="product-image"  />
       </td>
-      <td className="text-center">{title}</td>
+      <td className="text-center">{name}</td>
       <td className="text-center">{price}K</td>
       <td className="text-center">{quantity}px</td>
     </tr>

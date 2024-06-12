@@ -20,18 +20,12 @@ const Contact = () => {
       </div>
       <div className="col-md-9 org-card-promotion-ctx border-grey-lighter">
         <div className="card-body border-right border-coke border-none border-md-right-solid bg-white px-0 px-md-2 px-md-4">
-          <div className="d-lg-none d-flex justify-content-center">
-            <img 
-              src="/img/bg/banner-best-choice.png" 
-              className="w-90-percent" 
-              alt="banner-best-choice"
-            />
-          </div>
+
           <div 
             className="wrapper bg-pos-rb bg-img-sm-none pr-lg-18 p-2" 
             style={{ backgroundImage: 'none' }}
           >
-            <h2 className="card-title text-armchair mb-3">SUMMER DEAL - GIẢM 50% TỔNG HÓA ĐƠN</h2>
+            <h2 className="card-title text-armchair mb-3">HOT DEAL - GIẢM 50% TỔNG HÓA ĐƠN</h2>
             <hr className="title-hr mt-0 mb-2" />
             <div className="nomal text-grey-darker mb-2 mb-md-4 font-weight-light" style={{ whiteSpace: 'pre-line' }}>
               <p>* Giảm 50% tổng hóa đơn khi mua từ 2 Pizza size M/L.</p>
@@ -45,7 +39,7 @@ const Contact = () => {
             <div className="d-flex justify-content-start flex-wrap">
               <button 
                 className="order__btn" 
-                onClick={buy} // corrected onClick spelling
+                onClick={buy}
               >
                 <span>BUY NOW</span>
               </button>

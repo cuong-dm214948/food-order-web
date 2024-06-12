@@ -19,7 +19,7 @@ const logger = winston.createLogger({
 
 app.post('/checkout', csrfProtection, async (req, res) => {
     const { cartItems, totalAmount } = req.body;
-
+    console.log(cartItems, totalAmount)
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       port: 465,

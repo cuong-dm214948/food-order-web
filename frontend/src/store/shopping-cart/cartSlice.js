@@ -37,43 +37,26 @@ const cartSlice = createSlice({
     addItem(state, action) {
       const newItem = action.payload;
       const id = action.payload.id;
-      const extraIngredients = action.payload.extraIngredients;
       const existingItem = state.cartItems.find((item) => item.id === id);
-
+      
       
       if (!existingItem) {
         state.cartItems.push({
           id: newItem.id,
-          title: newItem.title,
-          image01: newItem.image01,
+          name: newItem.name,
+          image: newItem.image,
           price: newItem.price,
           quantity: 1,
           totalPrice: newItem.price,
-          extraIngredients: newItem.extraIngredients
         });
         state.totalQuantity++;
 
-      } else if(existingItem && (JSON.stringify(existingItem.extraIngredients) === JSON.stringify(extraIngredients)))  {
-        state.totalQuantity++;
-        existingItem.quantity++;
-      } else {
+      }  else {
 
-        const value = JSON.parse(localStorage.getItem("cartItems"));
-        let index = value.findIndex(s => s.id === existingItem.id);
-        const newValue = {
-        id: existingItem.id,
-        title: existingItem.title,
-        image01: existingItem.image01,
-        price: existingItem.price,
-        quantity: 1,
-        totalPrice: existingItem.price,
-        extraIngredients: extraIngredients
-      }
-        state.cartItems.splice(index, 1, newValue); 
-        state.totalQuantity = state.cartItems.reduce(
-          (total, item) => total + Number(item.quantity),
-          0
-        );
+        existingItem.quantity++;
+        existingItem.totalPrice =
+          Number(existingItem.totalPrice) + Number(newItem.price);
+        state.totalQuantity++;
       }
      
       state.totalAmount = state.cartItems.reduce(
@@ -87,6 +70,7 @@ const cartSlice = createSlice({
         state.totalAmount,
         state.totalQuantity
       );
+      
     },
 
    
@@ -138,6 +122,15 @@ const cartSlice = createSlice({
         state.totalAmount,
         state.totalQuantity
       );
+    },
+
+    //============ clear cart to initialize ===========
+    clearCart(state) {
+      state.cartItems = [];
+      state.totalQuantity = 0;
+      state.totalAmount = 0;
+
+      setItemFunc([], 0, 0);
     },
   },
 });

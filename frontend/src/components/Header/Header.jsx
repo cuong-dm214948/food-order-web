@@ -30,7 +30,7 @@ const Header = () => {
   const [userName, setUserName] = useState("");
   const currentUser = useSelector((state) => state.user.currentUser);
   const [auth, setAuth] = useState(false);
-  console.log(currentUser)
+ 
   useEffect(() => {
     if (currentUser === null) {
       setAuth(false);
@@ -86,6 +86,7 @@ const Header = () => {
       if (response.data.Status === 'Success') {
         setAuth(false);
         navigate('/login');
+        window.location.reload();
       } else {
         console.log('Logout failed:', response.data.Error);
       }

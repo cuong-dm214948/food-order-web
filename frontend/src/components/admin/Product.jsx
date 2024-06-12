@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from "react";
 import axios from 'axios';
 import { useNavigate }  from "react-router-dom";
+import "../../styles/updateProduct.css"
 
 export default function Product() {
   const navigate = useNavigate();
@@ -9,16 +10,30 @@ export default function Product() {
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [image, setImage] = useState(null);
+  const [csrfToken, setCsrfToken] = useState('');
+  const [uploadSuccess, setUploadSuccess] = useState(false);
 
   const handleImageChange = (e) => {
-    // Handle image change here
     const file = e.target.files[0];
     setImage(file);
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  useEffect(() => {
+    // Fetch CSRF token when the component mounts
+    const fetchCsrfToken = async () => {
+      try {
+        const response = await axios.get('http://localhost:5001/csrf-token', { withCredentials: true });
+        setCsrfToken(response.data.csrfToken);
+      } catch (err) {
+        console.error('Error fetching CSRF token', err);
+      }
+    };
 
+    fetchCsrfToken();
+  }, []);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     const formData = new FormData();
     formData.append('productName', productName);
     formData.append('category', category);
@@ -26,15 +41,24 @@ export default function Product() {
     formData.append('description', description);
     formData.append('image', image);
 
-    axios.post('http://localhost:3000/auth/addProduct', formData)
-      .then((result) => {
-        if (result.data.Status) {
-          navigate('/dashboard/product');
-        } else {
-          alert(result.data.Error);
-        }
-      })
-      .catch((err) => console.error(err));
+    try {
+      const res = await axios.post('http://localhost:5001/auth/addProduct', formData, {
+        headers: {
+          'CSRF-Token': csrfToken,
+        },
+        withCredentials: true,
+      });
+      
+      if (res.data.Status === 'Success') {
+        navigate('/dashboard/product');
+        setUploadSuccess(true);
+      } else {
+        alert(res.data.Error);
+      }
+    } catch (error) {
+      console.error('Error during form submission:', error);
+      alert('An error occurred while submitting the form. Please try again.');
+    }
   };
 
   return (
@@ -44,8 +68,8 @@ export default function Product() {
           <h2 className="font-bold text-lg">Upload Product</h2>
           <div className="w-fit ml-auto text-2xl hover:text-red-600 cursor-pointer"></div>
         </div>
-        <form className="grid p-4 gap-2 overflow-y-scroll h-full pb-5">
-          <label htmlFor="productName">Product Name:</label>
+        <form className="m-auto grid p-4 gap-2 overflow-y-scroll h-full pb-5" onSubmit={handleSubmit}>
+          <label htmlFor="productName" className="label">Product Name: </label>
           <input
             type="text"
             id="productName"
@@ -55,25 +79,29 @@ export default function Product() {
             className="p-2 bg-slate-100 border rounded"
             required
           />
-          <label htmlFor="category" className="mt-3">
+
+          <br></br>
+          
+          <label htmlFor="category" className="label">
             Category:
           </label>
           <select
-  required
-  name="category"
-  value={category}
-  onChange={(e) => setCategory(e.target.value)}
-  className="p-2 bg-slate-100 border rounded"
->
-  <option value="">Select Category</option>
-  <option value="Pizza">Pizza</option>
-  <option value="Dessert">Dessert</option>
-  <option value="Side">Side</option>
-  <option value="Drink">Drink</option>
-</select>
+            required
+            name="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+            className="p-2 bg-slate-100 border rounded"
+          >
+            <option value="">Select Category</option>
+            <option value="Pizza">Pizza</option>
+            <option value="Dessert">Dessert</option>
+            <option value="Side">Side</option>
+            <option value="Drink">Drink</option>
+          </select>
 
+          <br></br>
     
-          <label htmlFor="productImage" className="mt-3">
+          <label htmlFor="productImage" className="label">
             Product Image:
           </label>
           <label htmlFor="uploadImageInput">
@@ -89,10 +117,14 @@ export default function Product() {
                 id="uploadImageInput"
                 className="hidden"
                 onChange={handleImageChange}
+                required
               />
             </div>
           </label>
-          <label htmlFor="price" className="mt-3">
+
+              <br></br>
+
+          <label htmlFor="price" className="label">
             Price:
           </label>
           <input
@@ -104,23 +136,37 @@ export default function Product() {
             className="p-2 bg-slate-100 border rounded"
             required
           />
-          <label htmlFor="description" className="mt-3">
+
+          <br></br>
+
+          <label htmlFor="description" className="label">
             Description:
           </label>
           <textarea
             value={description}
             onChange={(e) => setDescription(e.target.value)}
-            className="h-28 bg-slate-100 border resize-none p-1"
+            className="h-28 bg-slate-100 border resize-none p-2"
             placeholder="Enter product description"
             name="description"
           ></textarea>
+
+              <br></br>
+
           <button
-            className="px-3 py-2 bg-red-600 text-white mb-10 hover:bg-red-700"
+            className="addTOCart__btn px-3 py-2 bg-red-600 text-white mb-10 hover:bg-red-700"
             onClick={handleSubmit}
           >
             Upload Product
           </button>
+
+
         </form>
+
+        {uploadSuccess && (
+            <div className="success-message">
+              Product uploaded successfully!
+            </div>
+          )}
       </div>
     </div>
   );

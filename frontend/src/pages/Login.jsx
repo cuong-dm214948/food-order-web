@@ -12,6 +12,7 @@ import {
   signInSuccess,
   signInFailure,
 } from '../store/user/userSlice';
+import { cartActions } from '../store/shopping-cart/cartSlice'; // Import clearCart action
 import "../styles/login.css";
 
 const Login = () => {
@@ -66,6 +67,9 @@ const Login = () => {
           token: res.data.token,
           refreshToken: res.data.refreshToken
         };
+
+        // Dispatch clearCart action on login
+        dispatch(cartActions.clearCart());
 
         dispatch(signInSuccess(userData.username));
 

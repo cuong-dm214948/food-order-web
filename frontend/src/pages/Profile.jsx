@@ -2,7 +2,7 @@ import { Container, Row, Col, Form } from "reactstrap";
 import "../styles/register.css";
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
-import profileValidation from '../utils/validation.js'
+import profileValidation from '../utils/validation.js';
 
 const Profile = () => {
   const [fullName, setFullName] = useState('');
@@ -30,11 +30,13 @@ const Profile = () => {
 
     const fetchUserProfile = async () => {
       try {
-        const response = await axios.get('https://localhost:5001/profile', {
-          credentials: 'include',
+        const response = await axios.get('http://localhost:5001/profile', {
+          withCredentials: true,
         });
+
         if (response.data) {
-          const data = await response.json();
+          const data = response.data;
+          console.log(data)
           setFullName(data.fullName);
           setMobileNo(data.mobileNo);
           setEmail(data.email);
@@ -55,12 +57,12 @@ const Profile = () => {
     e.preventDefault();
 
     const values = {
-      fullName: fullName, 
-      mobileNo: mobileNo, 
-      email: email, 
+      fullName: fullName,
+      mobileNo: mobileNo,
+      email: email,
       address: address
     };
-    
+
     const validationErrors = profileValidation(values);
 
     if (Object.keys(validationErrors).length > 0) {
@@ -68,21 +70,33 @@ const Profile = () => {
     } else {
       setErrors({});
       try {
+        const formData = new FormData();
+        formData.append('fullName', fullName);
+        formData.append('mobileNo', mobileNo);
+        formData.append('email', email);
+        formData.append('address', address);
+        if (profileImage) {
+          formData.append('profileImage', profileImage);
+        }
 
         const response = await axios.post('http://localhost:5001/profile', 
-        { fullName, mobileNo, email, address }, 
-        {
-        headers: {
-          'CSRF-Token': csrfToken
-        },
-        withCredentials: true,
-      });
-      
-        if (response.data.Status = "Success") {
+          formData, 
+          {
+            headers: {
+              'CSRF-Token': csrfToken,
+              'Content-Type': 'multipart/form-data',
+            },
+            withCredentials: true,
+          }
+        );
+
+        if (response.data.Status === "Success") {
           setSuccessMessage('Profile updated successfully!');
+          setTimeout(() => {
+            setSuccessMessage('');
+          }, 2000);
         } else {
-          const errorData = await response.json();
-          setErrors({ submit: errorData.message || 'An error occurred' });
+          setErrors({ submit: response.data.message || 'An error occurred' });
         }
       } catch (error) {
         setErrors({ submit: 'An error occurred' });
@@ -90,17 +104,15 @@ const Profile = () => {
     }
   };
 
-
   return (
     <div className='w-full max-w-md mx-auto py-3 py-md-4 flex flex-col justify-center items-center h-screen'>
-
-    <div className="title flex flex-col items-center text-center mb-3">
-      <h4 className='text-5xl font-bold'>Profile</h4>
-    </div>
-    <Row>
-                <Col lg="6" md="6" sm="12" className="m-auto text-center">
-                  <form className="form__group mb-5" onSubmit={handleSubmit} >
-<div className="form__group">
+      <div className="title flex flex-col items-center text-center mb-3">
+        <h4 className='text-5xl font-bold'>Profile</h4>
+      </div>
+      <Row>
+        <Col lg="6" md="6" sm="12" className="m-auto text-center">
+          <form className="form__group mb-5" onSubmit={handleSubmit}>
+            <div className="form__group">
               <input
                 type="text"
                 placeholder="Full name"
@@ -142,7 +154,7 @@ const Profile = () => {
                 type="file"
                 accept="image/*" // Allow only image files
                 className="border-2 p-2 rounded-md w-full"
-                onChange={(e) => setProfileImage(e.target.files[0])} 
+                onChange={(e) => setProfileImage(e.target.files[0])}
               />
               {errors.profileImage && <p className="text-red-500">{errors.profileImage}</p>}
               <br></br>
@@ -156,7 +168,7 @@ const Profile = () => {
         </Col>
       </Row>
     </div>
-  )
+  );
 }
 
 export default Profile;
