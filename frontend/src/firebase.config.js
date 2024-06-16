@@ -1,9 +1,11 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import {getFirestore} from "firebase/firestore"
 import {getStorage} from "firebase/getStorage"
+const dotenv = require('dotenv');
+dotenv.config({ path: './.env' });
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDhV8DXoUPYdQL1MipGadWmAk87MCEaOjU",
+  apiKey: process.env.FIREBASE,
   authDomain: "mern-auth-82257.firebaseapp.com",
   projectId: "mern-auth-82257",
   storageBucket: "mern-auth-82257.appspot.com",
