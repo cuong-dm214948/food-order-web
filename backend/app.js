@@ -58,10 +58,11 @@ app.get( '/auth/google/callback',
 
 app.get("/auth/google/success", (req, res) => {
 	if (req.user) {
+    console.log(req.user)
 		res.status(200).json({
 			error: false,
 			message: "Successfully Loged In",
-			user: req.user.name,
+			user: req.user.displayName,
 
 		});
 	} else {

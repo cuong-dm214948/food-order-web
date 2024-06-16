@@ -19,3 +19,46 @@
 {"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-14T07:24:56.813Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"}
 {"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-14T07:25:24.094Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"}
 {"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-14T07:46:05.620Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36 Edg/125.0.0.0"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T09:06:26.884Z"}
+{"level":"info","message":"User duc has logged in successfully."}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T09:07:01.922Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T09:07:26.344Z","url":"/order","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::ffff:127.0.0.1","level":"warn","message":"No token provided","timestamp":"2024-06-16T09:15:26.708Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.6422.112 Safari/537.36"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T15:19:58.452Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:20:22.348Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"level":"info","message":"User duc has logged in successfully."}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:51:57.985Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:54:48.571Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:54:56.450Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:55:09.474Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:55:16.132Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:55:20.306Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:55:22.577Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:55:32.348Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:55:38.034Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T15:56:27.259Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T15:56:53.122Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T16:00:16.717Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T16:00:24.457Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T16:00:26.732Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T16:00:28.564Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T16:00:30.738Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T16:00:34.872Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T16:00:39.359Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T16:01:39.870Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T16:01:41.871Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-16T16:01:44.412Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T16:02:14.819Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T16:02:20.476Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T16:02:34.684Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T16:02:51.372Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T16:05:25.664Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36"}
+{"level":"info","message":"User duc has logged in successfully."}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T16:29:20.592Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T16:43:40.987Z","url":"/order","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"level":"info","message":"User duc has logged in successfully."}
