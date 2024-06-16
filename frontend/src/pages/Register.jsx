@@ -5,10 +5,9 @@ import { Container, Row, Col } from "reactstrap";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import ReCAPTCHA from "react-google-recaptcha";
-import "../styles/register.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheck, faTimes, faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-
+import '../styles/register.css';
 const USER_REGEX = /^[a-z0-9]{3,23}$/;
 const PWD_REGEX = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@$&*()]).{8,24}$/;
 
@@ -25,13 +24,11 @@ const Register = () => {
   const [validMatch, setValidMatch] = useState(false);
   const [matchFocus, setMatchFocus] = useState(false);
 
-  const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
   const [captchaToken, setCaptchaToken] = useState('');
   const [csrfToken, setCsrfToken] = useState('');
   const [errMsg, setErrMsg] = useState('');
-  const [success, setSuccess] = useState(false);
-
+  
   const navigate = useNavigate();
   const userRef = useRef();
   const errRef = useRef();
@@ -67,8 +64,6 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    setError(false);
-
     const v1 = USER_REGEX.test(user);
     const v2 = PWD_REGEX.test(pwd);
     if (!v1 || !v2) {
@@ -78,7 +73,6 @@ const Register = () => {
     }
 
     if (!captchaToken) {
-      setError(true);
       setLoading(false);
       return;
     }
@@ -87,7 +81,6 @@ const Register = () => {
       const res = await axios.post('http://localhost:5001/register', {
         username: user,
         password: pwd,
-     
         captchaToken: captchaToken,
       }, {
         headers: {
@@ -98,19 +91,15 @@ const Register = () => {
 
       if (res.data.Status === "Success") {
         setLoading(false);
-        setSuccess(true);
         setUser('');
         setPwd('');
         setMatchPwd('');
         navigate('/login');
       } else {
         setLoading(false);
-        setError(true);
       }
     } catch (err) {
-      console.log(err)
       setLoading(false);
-      setError(true);
       setErrMsg('Registration failed');
     }
   };
@@ -122,7 +111,6 @@ const Register = () => {
   return (
     <Helmet title="Signup">
       <CommonSection title="Signup" />
-      <section>
         <Container>
           <Row>
             <Col lg="6" md="6" sm="12" className="m-auto text-center">
@@ -218,7 +206,6 @@ const Register = () => {
             </Col>
           </Row>
         </Container>
-      </section>
     </Helmet>
   );
 };

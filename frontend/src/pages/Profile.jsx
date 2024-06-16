@@ -1,4 +1,4 @@
-import { Container, Row, Col, Form } from "reactstrap";
+import { Row, Col} from "reactstrap";
 import "../styles/register.css";
 import React, { useState, useEffect } from 'react';
 import axios from "axios";
@@ -36,7 +36,6 @@ const Profile = () => {
 
         if (response.data) {
           const data = response.data;
-          console.log(data)
           setFullName(data.fullName);
           setMobileNo(data.mobileNo);
           setEmail(data.email);

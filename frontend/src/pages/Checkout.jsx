@@ -35,7 +35,7 @@ const Checkout = () => {
     setLoading(true);
     
     axios.post('http://localhost:5001/auth/checkout', {
-      
+      userId,
       cartItems,
       totalAmount,
       _csrf: csrfToken,
@@ -157,7 +157,7 @@ const Tr = ({ item }) => {
   return (
     <tr>
       <td className="text-center cart__img-box">
-        <img src={require(`../assets/image/${image}`)} alt="product-image"  />
+        <img src={require(`../assets/image/${image}`)} alt=""  />
       </td>
       <td className="text-center">{name}</td>
       <td className="text-center">{price}K</td>

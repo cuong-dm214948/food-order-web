@@ -64,7 +64,6 @@ const FoodDetails = () => {
                   <input
                     type="text"
                     placeholder="Name"
-                    className="items-center border-2 p-2 rounded-md w-full"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                   />
@@ -75,7 +74,6 @@ const FoodDetails = () => {
                     <input
                       type="text"
                       placeholder="Price"
-                      className="items-center border-2 p-2 rounded-md w-full"
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                     />
@@ -92,7 +90,6 @@ const FoodDetails = () => {
                   <input
                     type="text"
                     placeholder="Description"
-                    className="items-center border-2 p-2 rounded-md w-full"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />

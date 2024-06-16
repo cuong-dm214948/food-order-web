@@ -5,7 +5,7 @@ const ExtraIngredient = ({ingredient, onSelect, isChecked}) => {
 
   return (
     <div className="extraIngredient">
-        <label className="container">
+        <label className="container1">
             {ingredient}
             <input type="checkbox" checked={isChecked} onChange={() => onSelect(ingredient)}/>
             <span className="checkmark"></span>

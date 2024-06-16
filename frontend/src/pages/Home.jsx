@@ -7,7 +7,7 @@ import { Link} from "react-router-dom";
 const Home = () => {
   return (
     <Helmet title="Home">
-        <section>
+      
           <Container>
             <Row>
               <Col lg="6" md="6">
@@ -32,7 +32,7 @@ const Home = () => {
               </Col>
             </Row>
           </Container>
-        </section>
+        
     </Helmet>
   );
 };

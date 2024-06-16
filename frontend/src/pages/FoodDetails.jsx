@@ -110,8 +110,12 @@ const FoodDetails = () => {
                   </button>
                 </div>
               </Col>
-
               <Col lg='12'>
+
+              <div className="tabs d-flex align-items-center gap-5 py-3">
+              <h6>Extra ingredients: 15K</h6>
+                </div>
+
               <div className="extraIngredientsGrid">
                 {(Object.values(ExtraIngredients)).map((ingredient) => {
                   return (

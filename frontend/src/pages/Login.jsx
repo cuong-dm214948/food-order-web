@@ -12,8 +12,7 @@ import {
   signInSuccess,
   signInFailure,
 } from '../store/user/userSlice';
-import { cartActions } from '../store/shopping-cart/cartSlice'; // Import clearCart action
-import "../styles/login.css";
+import { cartActions } from '../store/shopping-cart/cartSlice';
 
 const Login = () => {
   const [user, setUser] = useState('');
@@ -22,18 +21,18 @@ const Login = () => {
   const [csrfToken, setCsrfToken] = useState('');
   const dispatch = useDispatch();
   const navigateTo = useNavigate();
-  const { loading, error } = useSelector((state) => state.user);
+  const { loading} = useSelector((state) => state.user);
   const [loginStatus, setLoginStatus] = useState('');
   const [statusHolder, setStatusHolder] = useState('message');
 
   useEffect(() => {
-    // Fetch CSRF token when the component mounts
+
     const fetchCsrfToken = async () => {
       try {
         const response = await axios.get('http://localhost:5001/csrf-token', { withCredentials: true });
         setCsrfToken(response.data.csrfToken);
       } catch (err) {
-        console.error('Error fetching CSRF token', err);
+        setLoginStatus('Invalid access');
       }
     };
 
@@ -68,9 +67,7 @@ const Login = () => {
           refreshToken: res.data.refreshToken
         };
 
-        // Dispatch clearCart action on login
         dispatch(cartActions.clearCart());
-
         dispatch(signInSuccess(userData.username));
 
         if (res.data.Role.role === "user") {
@@ -82,15 +79,12 @@ const Login = () => {
         }
         window.location.reload(true);
       } else {
-        console.log("data", res.data);
         dispatch(signInFailure(res.data));
         setLoginStatus('Invalid username or password!');
       }
     } catch (err) {
-      console.log(err);
       dispatch(signInFailure(err));
       setLoginStatus('Invalid username or password!');
-      console.error(err);
     }
   };
 
@@ -113,17 +107,16 @@ const Login = () => {
   return (
     <Helmet title="Login">
       <CommonSection title="Login" />
-      <section>
         <Container>
           <Row>
             <Col lg="6" md="6" sm="12" className="m-auto text-center">
               <form className="form" onSubmit={handleSubmit}>
                 <span className={statusHolder}>{loginStatus}</span>
                 <div className="form__group">
-                  <label htmlFor="username">Username:</label>
+                <label htmlFor="username">Username:</label>
                   <input
                     type="text"
-                    placeholder="username"
+                    placeholder="Input username"
                     onChange={(e) => setUser(e.target.value)}
                     required
                   />
@@ -153,14 +146,12 @@ const Login = () => {
               </form>
 
               <OAuth />
-              <Link to="/register">CAN'T SIGN IN? CREATE ACCOUNT</Link>
-              <p className="text-red-700 mt-5">
-                {error ? error.message || 'Something went wrong!' : ''}
-              </p>
+              <Link to="/register">Can't sign in? Create account</Link>
+
             </Col>
           </Row>
         </Container>
-      </section>
+
     </Helmet>
   );
 };

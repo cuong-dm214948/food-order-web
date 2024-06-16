@@ -4,8 +4,8 @@ import axios from 'axios';
 import logo from "../../assets/images/res-logo.png";
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import Routers from '../../routes/Routers';
-import { useDispatch, useSelector } from "react-redux";
-import { signInSuccess, signInFailure, signOut } from '../../store/user/userSlice.js';
+import { useDispatch} from "react-redux";
+import { signOut } from '../../store/user/userSlice.js';
 
 export default function Dashboard() {
   const navigate = useNavigate();

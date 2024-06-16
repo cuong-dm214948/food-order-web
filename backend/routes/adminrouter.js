@@ -53,7 +53,7 @@ router.post('/addProduct', csrfProtection, upload.single('image'), (req, res) =>
 })
 
 router.get('/logout', (req, res) => {
-    res.clearCookie('token')
+    res.clearCookie('access-token');
     return res.json({Status: "Success"})
 })
 
