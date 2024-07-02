@@ -62,3 +62,43 @@
 {"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-16T16:43:40.987Z","url":"/order","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
 {"level":"info","message":"User admin has logged in successfully as admin."}
 {"level":"info","message":"User duc has logged in successfully."}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-17T09:37:29.117Z"}
+{"level":"info","message":"User duc has logged in successfully."}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-17T09:49:11.971Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-06-19T06:36:19.449Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-06-19T06:36:58.089Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User duc has logged in successfully."}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T02:02:46.496Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-02T02:03:07.790Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User duc has logged in successfully."}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-02T02:03:27.552Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-02T02:04:02.356Z","url":"/order","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User duc has logged in successfully."}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T02:16:18.633Z"}
+{"level":"info","message":"User undefined has checked out in successfully.","timestamp":"2024-07-02T02:16:21.922Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T02:17:15.901Z"}
+{"level":"info","message":"User undefined has checked out in successfully.","timestamp":"2024-07-02T02:17:16.200Z"}
+{"level":"info","message":"User duc has checked out successfully.","timestamp":"2024-07-02T02:17:26.047Z"}
+{"level":"info","message":"User ordered successfully","timestamp":"2024-07-02T02:17:26.144Z"}
+{"level":"info","message":"User duc has checked out successfully.","timestamp":"2024-07-02T02:19:05.474Z"}
+{"level":"info","message":"User ordered successfully","timestamp":"2024-07-02T02:19:05.476Z"}
+{"level":"info","message":"User undefined has checked out in successfully.","timestamp":"2024-07-02T02:19:30.045Z"}
+{"level":"info","message":"User duc has checked out successfully.","timestamp":"2024-07-02T02:19:40.327Z"}
+{"level":"info","message":"User ordered successfully","timestamp":"2024-07-02T02:19:40.330Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T02:20:46.681Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T02:20:47.976Z"}
+{"level":"info","message":"User duc has checked out successfully.","timestamp":"2024-07-02T02:21:00.255Z"}
+{"level":"info","message":"User ordered successfully","timestamp":"2024-07-02T02:21:00.343Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T02:21:23.517Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T02:21:45.069Z"}
+{"level":"info","message":"User duc has checked out successfully.","timestamp":"2024-07-02T02:21:49.484Z"}
+{"level":"info","message":"User ordered successfully","timestamp":"2024-07-02T02:21:49.511Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T02:23:11.425Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T02:23:13.413Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-02T03:09:29.978Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User duc has logged in successfully."}
+{"level":"info","message":"User undefined has checked out in successfully.","timestamp":"2024-07-02T03:11:42.481Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-02T03:12:31.674Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"level":"info","message":"User admin has logged in successfully as admin."}

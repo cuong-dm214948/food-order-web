@@ -2,7 +2,8 @@ const express = require("express");
 const dotenv = require('dotenv');
 const nodemailer = require('nodemailer');
 const csurf = require('csurf');
-const winston = require('winston')
+const winston = require('winston');
+const db = require('../utils/db.js');
 dotenv.config({ path: './.env' });
 
 const app = express.Router()
@@ -37,7 +38,7 @@ const logger = winston.createLogger({
           secure: true,
           auth: {
             user: process.env.EMAIL,
-            pass: 'your-email-password',
+            pass: process.env.PASSWORD,
           },
         });
   
@@ -46,7 +47,7 @@ const logger = winston.createLogger({
         const timeString = currentDate.toLocaleTimeString();
         const mailOptions = {
           from: process.env.EMAIL,
-          to: 'customer@example.com',
+          to: 'cuong.dm214948@sis.hust.edu.vn',
           subject: 'Order Payment Confirmation',
           text: `Dear Customer ${userId},
           
@@ -61,7 +62,7 @@ const logger = winston.createLogger({
           Payment Amount: ${totalAmount}K
           Payment Method: VNPay
           
-          If you have any questions or need further assistance, please do not hesitate to contact our customer support team at [Customer Support Email] or [Customer Support Phone Number].
+          If you have any questions or need further assistance, please do not hesitate to contact our customer support team.
           
           Thanks for shopping with our store!
           
