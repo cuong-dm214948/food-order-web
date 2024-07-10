@@ -88,7 +88,6 @@ const logger = winston.createLogger({
             console.log('Email sent:', info.response);
           }
         });
-        logger.info('User ordered successfully', { timestamp: new Date().toISOString() });
         return res.json({ status: 'Success', message: 'Order processed successfully' });
       }
     });

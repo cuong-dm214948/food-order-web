@@ -102,3 +102,45 @@
 {"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-02T03:12:31.674Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
 {"level":"info","message":"User admin has logged in successfully as admin."}
 {"level":"info","message":"User admin has logged in successfully as admin."}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T09:48:43.626Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-02T09:49:15.251Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:04:32.798Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:04:49.712Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:07:18.980Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:07:22.203Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:07:26.365Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:07:49.429Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:10:10.282Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:12:21.211Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-02T10:12:45.892Z","url":"/order","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:13:34.726Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:13:39.842Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:13:45.296Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:13:50.440Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:13:58.882Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:56:28.948Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:57:02.200Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:57:04.514Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T10:57:36.752Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-02T11:00:26.154Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-02T11:01:21.761Z","url":"/order","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User duc has logged in successfully."}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T01:56:24.599Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-06T01:56:42.984Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User duc has logged in successfully."}
+{"level":"info","message":"User undefined has checked out in successfully.","timestamp":"2024-07-06T02:00:06.015Z"}
+{"ip":"::1","level":"warn","message":"No token provided","timestamp":"2024-07-06T02:00:45.295Z","url":"/login","userAgent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36 Edg/126.0.0.0"}
+{"level":"info","message":"User admin has logged in successfully as admin."}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:41:23.445Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:43:46.169Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:43:49.117Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:44:00.247Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:44:02.058Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:44:03.614Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:44:06.471Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:44:11.686Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:44:16.346Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:44:18.894Z"}
+{"level":"info","message":"MySQL connected","timestamp":"2024-07-06T02:44:33.874Z"}

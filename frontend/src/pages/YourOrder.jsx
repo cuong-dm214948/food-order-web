@@ -30,6 +30,12 @@ const TabsComponent = () => {
             <p>Method payment: {order.method}</p>
             <p>Total Amount: {order.total},000đ</p>
             <p>Order Time: {order.timestamp}</p>
+            {order.confirm === 0 && (
+              <h4>Your order is processing</h4>
+            )}
+            {order.confirm === 1 && (
+              <h4>Your order is served</h4>
+            )}
             <table className="order-table">
               <thead>
                 <tr>
@@ -40,6 +46,7 @@ const TabsComponent = () => {
                   <th>Total Price</th>
                 </tr>
               </thead>
+
               <tbody>
                 {JSON.parse(order.products).map(product => (
                   <tr key={product.id}>

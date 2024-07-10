@@ -301,6 +301,14 @@ app.get('/profile', csrfProtection, authMiddleware, (req, res) => {
   });
 });
 
+app.post('/order',csrfProtection, authMiddleware, async (req, res) => {
+  const { orderId, confirm } = req.body;
+  db.query('UPDATE orders SET confirm = ? WHERE id = ?', [confirm, orderId]);
+  logger.info('Admin set confirm order successfully', {ip: req.ip, userAgent: req.get('User-Agent'), url: req.originalUrl, timestamp: new Date().toISOString() });
+  return res.status(200).json({ message: 'Order updated successfully' });
+  } 
+);
+
 app.get('/order', csrfProtection, authMiddleware, async (req, res) => {
   const username = req.username; // Assuming username is set by authMiddleware
   console.log(username)

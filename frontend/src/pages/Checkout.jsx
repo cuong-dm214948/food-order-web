@@ -101,11 +101,11 @@ const Checkout = () => {
         </div>
         <h4>We are already sent order payment to your email. PLease verify!</h4>
         <span>
-          Your order is being processed and will be served as fast as possible.
+          Your order is being processing and will be served as fast as possible.
         </span>
         <br></br>
         <span>
-          You can see order detail in order history.
+          You can see order status detail in order history.
         </span>
 
       </div>

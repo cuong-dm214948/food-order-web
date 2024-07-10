@@ -76,7 +76,7 @@ const AllFoods = () => {
               className={`all__btn ${category === "Discount" ? "foodBtnActive" : ""}`}
               onClick={() => setCategory("Discount")}
             >
-              Discount
+              Promotion 
             </button>
             <button
               className={`d-flex align-items-center gap-2 ${category === "Pizza" ? "foodBtnActive" : ""}`}
