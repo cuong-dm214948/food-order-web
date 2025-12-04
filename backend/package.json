@@ -2,9 +2,9 @@
     "name": "google-oauth2",
     "version": "1.0.0",
     "description": "",
-    "main": "index.js",
+    "main": "server.js",
     "scripts": {
-        "start": "node app"
+        "start": "node server"
     },
     "author": "",
     "license": "ISC",
