@@ -30,6 +30,16 @@ app.use(cors({
   credentials: true,
 }));
 
+const mongoose = require("mongoose");
+//configure mongoose
+mongoose.connect(
+    process.env.MONGODB_URI || "mongodb+srv://cuong:cuong@cluster0.fkjbif3.mongodb.net/?appName=Cluster0",
+    {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    }
+)
+
 const csrfProtection = csurf({ cookie: true });
 app.use(csrfProtection);
 
