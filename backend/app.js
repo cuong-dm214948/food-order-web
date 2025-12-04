@@ -16,6 +16,7 @@ const  userrouter = require ('./routes/user.js')
 const adminrouter =require ('./routes/adminrouter.js')
 const checkout = require('./routes/checkout.js')
 const db = require ('./utils/db.js')
+import serverless from "serverless-http";
 
 const app = express();
 app.use(session({ secret: 'cats', resave: false, saveUninitialized: true }));
@@ -448,6 +449,4 @@ app.post('/change_password', csrfProtection, authMiddleware, async (req, res) =>
   });
 });
 
-app.listen(5001, () => {
-  console.log("Server is running on port 5001");
-});
+export default serverless(app);
