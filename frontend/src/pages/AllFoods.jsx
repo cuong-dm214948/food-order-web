@@ -19,6 +19,7 @@ const AllFoods = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get('http://localhost:5001/auth/product');
+        console.log(response.data)
         setAllProducts(response.data.products);
       } catch (error) {
         console.error('Error fetching products:', error);

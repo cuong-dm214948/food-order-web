@@ -32,10 +32,10 @@ const upload = multer({
 })
 
 router.post('/addProduct', csrfProtection, upload.single('image'), (req, res) => {
-    const sql = `INSERT INTO product
+    const sql = `INSERT INTO products
     (name, price, category, image, description)  VALUES (?)`;
 
-
+    console.log(req.body)
     const values = [
         req.body.productName,
         req.body.price,

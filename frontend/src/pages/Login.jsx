@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
-import ReCAPTCHA from "react-google-recaptcha";
 import Helmet from "../components/Helmet/Helmet";
 import CommonSection from "../components/UI/common-section/CommonSection";
 import { Container, Row, Col } from "reactstrap";
@@ -17,7 +16,6 @@ import { cartActions } from '../store/shopping-cart/cartSlice';
 const Login = () => {
   const [user, setUser] = useState('');
   const [pwd, setPwd] = useState('');
-  const [captchaToken, setCaptchaToken] = useState('');
   const [csrfToken, setCsrfToken] = useState('');
   const dispatch = useDispatch();
   const navigateTo = useNavigate();
@@ -41,23 +39,20 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!captchaToken) {
-      setLoginStatus('Please complete the CAPTCHA');
-      return;
-    }
 
     dispatch(signInStart());
+    console.log(user,pwd,csrfToken)
     try {
-      const res = await axios.post('http://localhost:5001/auth/login', {
+      const res = await axios.post('http://localhost:5001/login', {
         username: user,
-        password: pwd,
-        captchaToken: captchaToken,
+        password: pwd
       }, {
         headers: {
           'CSRF-Token': csrfToken
         },
         withCredentials: true,
       });
+   
 
       if (res.data.Status === 'Success') {
         const userData = {
@@ -69,6 +64,7 @@ const Login = () => {
 
         dispatch(cartActions.clearCart());
         dispatch(signInSuccess(userData.username));
+        
 
         if (res.data.Role.role === "user") {
           setLoginStatus('Login successful!');
@@ -100,9 +96,6 @@ const Login = () => {
     }
   }, [loginStatus]);
 
-  const onCaptchaChange = (token) => {
-    setCaptchaToken(token);
-  };
 
   return (
     <Helmet title="Login">
@@ -130,13 +123,6 @@ const Login = () => {
                     placeholder="password"
                     onChange={(e) => setPwd(e.target.value)}
                     required
-                  />
-                </div>
-
-                <div className="form__group">
-                  <ReCAPTCHA
-                    sitekey="6Le4pd8pAAAAAHcnu7JFxKnY3tbhm6r2jH_hcMms"
-                    onChange={onCaptchaChange}
                   />
                 </div>
 

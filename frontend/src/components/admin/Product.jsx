@@ -9,7 +9,7 @@ export default function Product() {
   const [category, setCategory] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState('');
   const [csrfToken, setCsrfToken] = useState('');
   const [uploadSuccess, setUploadSuccess] = useState(false);
 
@@ -113,7 +113,7 @@ export default function Product() {
                 <span>Choose an image</span>
               )}
               <input
-                type="file"
+                type="file" 
                 id="uploadImageInput"
                 className="hidden"
                 onChange={handleImageChange}
